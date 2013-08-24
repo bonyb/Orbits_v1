@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
+  <display-name>Orbits_v1</display-name>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.htm</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>default.html</welcome-file>
+    <welcome-file>default.htm</welcome-file>
+    <welcome-file>default.jsp</welcome-file>
+  </welcome-file-list>
+  <session-config>
+    <session-timeout>30</session-timeout>
+  </session-config>
+  <servlet>
+    <display-name>MyServlet</display-name>
+    <servlet-name>MyServlet</servlet-name>
+    <servlet-class>com.node.create.MyServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <display-name>AuthLogin</display-name>
+    <servlet-name>AuthLogin</servlet-name>
+    <servlet-class>com.node.login.AuthLogin</servlet-class>
+  </servlet>
+  <servlet>
+    <display-name>SessionInvalidate</display-name>
+    <servlet-name>SessionInvalidate</servlet-name>
+    <servlet-class>com.node.logout.SessionInvalidate</servlet-class>
+  </servlet>
+  <servlet>
+    <display-name>UpvoteServlet</display-name>
+    <servlet-name>UpvoteServlet</servlet-name>
+    <servlet-class>com.node.upvote.UpvoteServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <display-name>DownvoteServlet</display-name>
+    <servlet-name>DownvoteServlet</servlet-name>
+    <servlet-class>com.node.downvote.DownvoteServlet</servlet-class>
+  </servlet>
+</web-app>

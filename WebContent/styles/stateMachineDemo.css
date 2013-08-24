@@ -1,0 +1,26 @@
+#demo {
+	margin-top: 5em;
+}
+
+.parent{
+	display:none;
+}
+.aLabel {
+	background-color: white;
+	opacity: 0.8;
+	padding: 0.3em;
+}
+
+
+._jsPlumb_endpoint {
+	z-index: 3;
+}
+/*	._jsPlumb_connector { border:1px solid red; }*/
+
+.dragHover {
+	border: 1px dotted red;
+}
+
+path {
+	cursor: pointer;
+}
