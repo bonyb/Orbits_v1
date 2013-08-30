@@ -37,4 +37,14 @@
     <servlet-name>DownvoteServlet</servlet-name>
     <servlet-class>com.node.downvote.DownvoteServlet</servlet-class>
   </servlet>
+  <!-- servlet>
+    <display-name>ExportServlet</display-name>
+    <servlet-name>ExportServlet</servlet-name>
+    <servlet-class>com.node.export.ExportServlet</servlet-class>
+  </servlet-->
+    <servlet>
+  	<display-name>EditServlet</display-name>
+    <servlet-name>EditServlet</servlet-name>
+    <servlet-class>com.node.edit.EditServlet</servlet-class>
+  </servlet>
 </web-app>

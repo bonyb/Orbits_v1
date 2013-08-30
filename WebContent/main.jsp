@@ -114,6 +114,29 @@
 }
 	
 	
+// Edit Title and Description
+	
+	function editNode(key){
+	
+	// title
+	var titleLabel="#title_"+key;
+	var titleVal=$(titleLabel).text();
+	var formId="editForm_"+key;
+	$(titleLabel).replaceWith('<input class="editTitle" type="text" name="title">');
+	$('.editTitle').val(titleVal);
+	$('.editTitle').attr("form",formId);
+	
+	// Description
+	var descLabel="#node_description_"+key;
+	var descVal=$(descLabel).text();
+	$(descLabel).replaceWith('<textarea class="editDesc" rows="4" cols="50" maxlength="250" name="description"></textarea>');
+	$('.editDesc').val(descVal);
+	$('.editDesc').attr("form",formId);
+	
+	//show submit button
+	var editFormSubmit="#editNodeDiv_"+key;
+	$(editFormSubmit).show();
+	}
 
 
 </script>
@@ -312,7 +335,7 @@
 				<c:set var="nodename" value="nodeno_${nodeno}"></c:set>
 				<c:set var="imgnodename" value="imgno_${nodeno}"></c:set>
 				<div class="node" id="container_<%=i%>">
-				
+				<!-- Display title -->
 					<div class="node_title display_title" id="title_<%=key %>"><%=value.get(0)%></div>
 					
 					<img class="mark_icon" id="mark_icon_<%=key%>" src="images/icons/mark_icon.png" />
@@ -361,14 +384,21 @@
 						</c:if>
 					
 					</div>
-					<div class="node_description"><%=value.get(1)%></div>
+						<!-- Display Description -->
+					<div class="node_description" id="node_description_<%=key%>"><%=value.get(1)%></div>
 					
 					<div class="content_icons">
 					
 
-					
-					
-						<img class="text_icon" id="text_icon_<%=key%>" src="images/icons/text_icon.png" />
+					 <img style="cursor:pointer;" class="text_icon" id="text_icon_<%=key%>" src="images/icons/text_icon.png" onclick="editNode(<%=key%>);"/>  
+						
+						<!-- To edit! -->
+						<div class="editNode" id="editNodeDiv_<%=key%>" style="display:none">
+						<form action="EditServlet" method="post" id="editForm_<%=key%>">
+							<input type="hidden" value='${nodeno}' name="nodeID" /> 
+							<input type="image" src="images/sub_btn.png" alt="Submit" align="left" width="48" height="39">
+						</form> 
+						</div>
 						<img class="camera_icon" id="camera_icon_<%=key%>" src="images/icons/camera_icon.png" />
 						<img class="graphic_icon" id="graphic_icon_<%=key%>" src="images/icons/graphic_icon.png" />
 						<img class="link_icon" id="link_icon_<%=key%>" src="images/icons/link_icon.png" />
@@ -377,7 +407,7 @@
 				</div>
 			</div>
 
-						<div class="add_icon">
+						<div class="add_icon" style="cursor:pointer;">
 							<img class="new_btn" id="new_btn_<%=key%>" src="images/plus_btn.png" />
 						</div>
 
