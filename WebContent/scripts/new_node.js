@@ -96,7 +96,8 @@ $(document).ready(function() {
     	// Click on Node \\
     	$(newNodeBtnArray[i]).click(function(){
     		$(this).slideUp();
-    		$(this).parent().css("display","none");
+    		//$(this).parent().css("display","none");
+    		$(this).parent().hide();
     		$(this).parent().next().show();
     	});
 	}

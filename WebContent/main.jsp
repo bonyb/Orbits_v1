@@ -120,25 +120,60 @@
 	
 	// title
 	var titleLabel="#title_"+key;
-	var titleVal=$(titleLabel).text();
-	var formId="editForm_"+key;
-	$(titleLabel).replaceWith('<input class="editTitle" type="text" name="title">');
-	$('.editTitle').val(titleVal);
-	$('.editTitle').attr("form",formId);
+	$(titleLabel).hide();
+	$('.editTitle').show();
+
+	//var titleVal=$(titleLabel).text();
+	//var formId="editForm_"+key;
+	//$(titleLabel).replaceWith('<input class="editTitle" type="text" name="title">');
+	//$('.editTitle').val(titleVal);
+	//$('.editTitle').attr("form",formId);
 	
 	// Description
 	var descLabel="#node_description_"+key;
-	var descVal=$(descLabel).text();
-	$(descLabel).replaceWith('<textarea class="editDesc" rows="4" cols="50" maxlength="250" name="description"></textarea>');
-	$('.editDesc').val(descVal);
-	$('.editDesc').attr("form",formId);
+	$(descLabel).hide();
+	$('.editDesc').show();
+	
+	//var descVal=$(descLabel).text();
+	//$(descLabel).replaceWith('<textarea class="editDesc" rows="4" cols="50" maxlength="250" name="description"></textarea>');
+	//$('.editDesc').val(descVal);
+	//$('.editDesc').attr("form",formId);
 	
 	//show submit button
 	var editFormSubmit="#editNodeDiv_"+key;
 	$(editFormSubmit).show();
 	}
 
+// cancel Edit
+function cancelEdit(key){
+	
+	// title
+	var titleLabel="#title_"+key;
+	$(titleLabel).show();
+	$('.editTitle').hide();
 
+	
+	// Description
+	var descLabel="#node_description_"+key;
+	$(descLabel).show();
+	$('.editDesc').hide();
+
+	//hide submit button
+	var editFormSubmit="#editNodeDiv_"+key;
+	$(editFormSubmit).hide();
+	}
+
+//Cancel Add
+
+function cancelAdd(key){
+	var newnode="#new_node_form_"+key;
+	var addButton="#new_btn_"+key;
+	$(newnode).hide();
+	$(addButton).show();
+	$('.add_icon').show();
+
+	
+}
 </script>
 <body data-library="jquery" onload="getCookie()" onunload="setCookie()">
 	<%@include file="header.jsp"%>
@@ -337,6 +372,8 @@
 				<div class="node" id="container_<%=i%>">
 				<!-- Display title -->
 					<div class="node_title display_title" id="title_<%=key %>"><%=value.get(0)%></div>
+				<!-- To edit title -->	
+					<input class="editTitle" type="text" name="title" style="display:none;" value="<%=value.get(0)%>" form="editForm_<%=key%>" >
 					
 					<img class="mark_icon" id="mark_icon_<%=key%>" src="images/icons/mark_icon.png" />
 						
@@ -386,6 +423,8 @@
 					</div>
 						<!-- Display Description -->
 					<div class="node_description" id="node_description_<%=key%>"><%=value.get(1)%></div>
+						<!-- Edit Description -->
+						<textarea class="editDesc" rows="4" cols="50" maxlength="250" name="description" style="display:none;" form="editForm_<%=key%>"><%=value.get(1)%></textarea>
 					
 					<div class="content_icons">
 					
@@ -398,6 +437,7 @@
 							<input type="hidden" value='${nodeno}' name="nodeID" /> 
 							<input type="image" src="images/sub_btn.png" alt="Submit" align="left" width="48" height="39">
 						</form> 
+						<a href="#" id="cancelEdit_<%=key%>" onclick="cancelEdit(<%=key%>)"><img src="images/cncl_btn.png" alt="Cancel Edit" /></a>
 						</div>
 						<img class="camera_icon" id="camera_icon_<%=key%>" src="images/icons/camera_icon.png" />
 						<img class="graphic_icon" id="graphic_icon_<%=key%>" src="images/icons/graphic_icon.png" />
@@ -427,7 +467,7 @@
 						<input type="hidden" value='${nodeno}' name="parentId" /> <br>
 								
 						<input type="image" src="images/sub_btn.png" alt="Submit" align="left" width="48" height="39">
-						<a href="#" id="cancel_<%=key%>"><img src="images/cncl_btn.png" alt="Read book" /></a>
+						<a href="#" id="cancel_<%=key%>" onclick="cancelAdd(<%=key%>)"><img src="images/cncl_btn.png" alt="Cancel Add" /></a>
 					<!-- <div>cancel button onclick='$(this).parent().parent().hide();'</div> -->
 				</form>
 			</div>			
