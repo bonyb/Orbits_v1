@@ -3,10 +3,13 @@
 <%@page import="java.util.Iterator"%>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.Arrays"%>
+<%@page import="java.util.ArrayList"%>
 <%@page import="javax.script.*"%>
 <%@page import="java.util.Random"%>
 <%@page import="java.awt.Color"%>
 <%@page import="java.util.Enumeration"%>
+<%@page import="org.apache.cxf.jaxrs.impl.MetadataMap"%>
+<%@page import="javax.ws.rs.core.MultivaluedMap"%>
 <%@page import="sun.misc.Cache"%>
 
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
@@ -29,157 +32,15 @@
 <script type="text/javascript"
 		src="js/lib/jquery.ui.touch-punch.min.js"></script>
 	<!-- /DEP -->
-
+	<script type="text/javascript" src="scripts/cookieManagement.js"></script>
+	<script type="text/javascript" src="scripts/editNode.js"></script>
 	<script type="text/javascript" src="scripts/new_node.js"></script>
 </head>
-<script type="text/javascript">
-	
-	
-		  
-	
-	function setCookie()
-	{ 
-		var nodeArrayCache = document.getElementsByClassName("w");
-		var nodePositionArray= new Array();
-		for(var i=0;i<nodeArrayCache.length;i++){
-			var offset =$(nodeArrayCache[i]).offset();
-			nodePositionArray[i]="left:" + offset.left + "top:" + offset.top;
-		    }
-		var c_name="nodePos";
-		document.cookie=c_name + "=" + nodePositionArray;
-		  }	
-	
-	function getCookie()
-	{
-	var nodeArrayCache = document.getElementsByClassName("w");
-	var c_value = document.cookie;
-	var c_start = c_value.indexOf(" "+"nodePos=");
-	if (c_start == -1)
-	{
-	c_start = c_value.indexOf("nodePos" + "=");
-	}
-	if (c_start == -1)
-	{
-	c_value = null;
-	}else{
-	c_start = c_value.indexOf("=", c_start) + 1;
-	var c_end = c_value.indexOf(";", c_start);
-	if (c_end == -1)
-	{c_end = c_value.length;}
-	c_value = unescape(c_value.substring(c_start,c_end));
-	}
-	//$('.hello').text("c_value"+c_value);
-	//setCookie(nodeArrayCache);
-	//var nodePosition=getCookie(nodeArrayCache);
-	if(c_value!=null)
-	{
-		
-	
-		var pos=c_value.split(",");
-		
-	
-		for(var i=0;i<pos.length;i++){
-			//var l=pos[i].indexOf("left:");
-			var t=pos[i].indexOf("top:");
-			var leftval=pos[i].slice(5,t);
-			var topval=pos[i].slice(t+4,pos[i].length);
-			$(nodeArrayCache[i]).offset({top:topval,left:leftval});
-			
-		}
-		for(var i=0;i<nodeArrayCache.length;i++)
-		{
-			var src = $(nodeArrayCache[i]).next().html();
-			var target1 = nodeArrayCache[i].id;
-
-			if(i!=0)
-			{
-				jsPlumb.connect({source:src, target:target1, anchor:"Center"});
-			}				
-		} 
-	}else{
-		var nodeArray = new Array();
-		nodeArray = document.getElementsByClassName("w");
-		for(var i=0;i<nodeArray.length;i++)
-		{
-			var src = $(nodeArray[i]).next().html();
-			var target1 = nodeArray[i].id;
-
-			if(i!=0)
-			{
-				jsPlumb.connect({source:src, target:target1, anchor:"Center"});
-			}				
-		}
-	}
-	//$('#node_field').append("pos+"+pos.length+"nodec+"+nodeArrayCache.length);
-}
-	
-	
-// Edit Title and Description
-	
-	function editNode(key){
-	
-	// title
-	var titleLabel="#title_"+key;
-	$(titleLabel).hide();
-	$('.editTitle').show();
-
-	//var titleVal=$(titleLabel).text();
-	//var formId="editForm_"+key;
-	//$(titleLabel).replaceWith('<input class="editTitle" type="text" name="title">');
-	//$('.editTitle').val(titleVal);
-	//$('.editTitle').attr("form",formId);
-	
-	// Description
-	var descLabel="#node_description_"+key;
-	$(descLabel).hide();
-	$('.editDesc').show();
-	
-	//var descVal=$(descLabel).text();
-	//$(descLabel).replaceWith('<textarea class="editDesc" rows="4" cols="50" maxlength="250" name="description"></textarea>');
-	//$('.editDesc').val(descVal);
-	//$('.editDesc').attr("form",formId);
-	
-	//show submit button
-	var editFormSubmit="#editNodeDiv_"+key;
-	$(editFormSubmit).show();
-	}
-
-// cancel Edit
-function cancelEdit(key){
-	
-	// title
-	var titleLabel="#title_"+key;
-	$(titleLabel).show();
-	$('.editTitle').hide();
-
-	
-	// Description
-	var descLabel="#node_description_"+key;
-	$(descLabel).show();
-	$('.editDesc').hide();
-
-	//hide submit button
-	var editFormSubmit="#editNodeDiv_"+key;
-	$(editFormSubmit).hide();
-	}
-
-//Cancel Add
-
-function cancelAdd(key){
-	var newnode="#new_node_form_"+key;
-	var addButton="#new_btn_"+key;
-	$(newnode).hide();
-	$(addButton).show();
-	$('.add_icon').show();
-
-	
-}
-</script>
 <body data-library="jquery" onload="getCookie()" onunload="setCookie()">
 	<%@include file="header.jsp"%>
 	<% HashMap<String,Color> colorMap= new HashMap<String,Color>(); %>
-
-	<div id="node_field" style="position: absolute">
+<div class="mainContainer">
+	<div id="node_field" style="position: absolute" class="check">
 		<div id="demo">
 
 			<%
@@ -377,10 +238,9 @@ function cancelAdd(key){
 					
 					<img class="mark_icon" id="mark_icon_<%=key%>" src="images/icons/mark_icon.png" />
 						
-						<img class="comment_icon" id="comment_icon_<%=key%>" src="images/icons/comment_icon.png" />
-						
-						
-						
+						<!-- Comment submit section -->
+						<img style="cursor:pointer;" class="comment_icon" id="comment_icon_<%=key%>" src="images/icons/comment_icon.png" onclick="submitComment(<%=key%>);"/>
+											
 						<div class="voting_form">
 						<form  action="DownvoteServlet" method="post">
 							<input type="hidden" value='${nodeno}' name="nodeID" /> 
@@ -423,6 +283,34 @@ function cancelAdd(key){
 					</div>
 						<!-- Display Description -->
 					<div class="node_description" id="node_description_<%=key%>"><%=value.get(1)%></div>
+					<div class="node_comments" id="node_comments_<%=key%>">
+					<%
+					MultivaluedMap<String,List<String>> comments=new MetadataMap<String,List<String>>();
+					comments = (MultivaluedMap<String,List<String>>) request.getAttribute("comments");
+					if (null != comments && !comments.isEmpty()) {
+						if(comments.containsKey(key)){
+							// if the particular node has comments, iterating over the list of comments
+							Iterator listIt=comments.get(key).iterator();while (listIt.hasNext()) {
+								List<String> commentSection = (List<String>) listIt.next();
+								Iterator commentDetIt=commentSection.iterator();
+								//showing the comment/author/date
+								%>
+								<div class="commentsDesc">			
+							<%
+									while(commentDetIt.hasNext()){ %> 
+										 <div class="author_name"><%=commentDetIt.next().toString() %> </div>
+									<%}
+							%>
+							</div>
+							<%
+								
+							}
+						 }
+						
+					}
+					
+					%>
+					</div>
 						<!-- Edit Description -->
 						<textarea class="editDesc" rows="4" cols="50" maxlength="250" name="description" style="display:none;" form="editForm_<%=key%>"><%=value.get(1)%></textarea>
 					
@@ -439,6 +327,18 @@ function cancelAdd(key){
 						</form> 
 						<a href="#" id="cancelEdit_<%=key%>" onclick="cancelEdit(<%=key%>)"><img src="images/cncl_btn.png" alt="Cancel Edit" /></a>
 						</div>
+						
+							<!-- To comment- the form! -->
+						<div class="commentSection" id="commentDiv_<%=key%>" style="display:none">
+						<form action="CommentServlet" method="post" id="commentForm_<%=key%>">
+						<textarea id="comment_<%=key%>" class="commentSection" rows="4" cols="50" maxlength="250" name="comment" form="commentForm_<%=key%>"></textarea>
+							<input type="hidden" value='${nodeno}' name="nodeID" /> 
+							<input type="image" src="images/sub_btn.png" alt="Submit" width="48" height="39"/>
+						</form> 
+						<a href="#" id="cancelEdit_<%=key%>" onclick="cancelComment(<%=key%>)"><img src="images/cncl_btn.png" alt="Cancel Comment" /></a>
+						</div>
+						
+						
 						<img class="camera_icon" id="camera_icon_<%=key%>" src="images/icons/camera_icon.png" />
 						<img class="graphic_icon" id="graphic_icon_<%=key%>" src="images/icons/graphic_icon.png" />
 						<img class="link_icon" id="link_icon_<%=key%>" src="images/icons/link_icon.png" />
@@ -496,7 +396,7 @@ function cancelAdd(key){
 	
 	<img class="placeholder_thread" src="images/placeholderdiscussion.png" />
 
-
+</div>
 
 
 	<!-- JS -->

@@ -19,42 +19,54 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/DownvoteServlet")
 public class DownvoteServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public DownvoteServlet() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#HttpServlet()
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	public DownvoteServlet() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doGet(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 	}
 
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		String nodeID=request.getParameter("nodeID").toString();
-		System.out.println("parentId--"+nodeID);
+		String nodeID = request.getParameter("nodeID").toString();
+		System.out.println("parentId--" + nodeID);
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
-			//Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?" +"user=orbits&password=orbits");
-			//to get get the upvote count
-			java.sql.PreparedStatement stat= con.prepareStatement("select DownVote from Node where NodeID='"+nodeID+"'");
-			ResultSet result= stat.executeQuery();
+			Connection con = DriverManager
+					.getConnection("jdbc:mysql://localhost:3306/test");
+			// Connection con =
+			// DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"
+			// +"user=orbits&password=orbits");
+			// to get get the upvote count
+			java.sql.PreparedStatement stat = con
+					.prepareStatement("select DownVote from Node where NodeID='"
+							+ nodeID + "'");
+			ResultSet result = stat.executeQuery();
 			result.first();
-			int downvote=result.getInt(1);
+			int downvote = result.getInt(1);
 			downvote++;
-			java.sql.PreparedStatement stat1= con.prepareStatement("UPDATE Node SET DownVote="+downvote+" Where NodeID='"+nodeID+"'");
+			java.sql.PreparedStatement stat1 = con
+					.prepareStatement("UPDATE Node SET DownVote=" + downvote
+							+ " Where NodeID='" + nodeID + "'");
 			stat1.executeUpdate();
-			RequestDispatcher dispatcher= request.getRequestDispatcher("/AuthLogin");
+			RequestDispatcher dispatcher = request
+					.getRequestDispatcher("/AuthLogin");
 			dispatcher.forward(request, response);
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -63,6 +75,6 @@ public class DownvoteServlet extends HttpServlet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
-	}
+}

@@ -54,7 +54,7 @@ article,aside,dialog,figure,footer,header,hgroup,menu,nav,section {
 	width: 55%;
 	margin-right: auto; 
 
-	overflow: auto;
+	overflow: scroll;
 	background-color: rgb(244, 240, 233);
 }
 
@@ -485,6 +485,27 @@ article,aside,dialog,figure,footer,header,hgroup,menu,nav,section {
 .errorWrapper {
 	color: #800000;
 }
+
+.commentsDesc{
+	position:relative;
+    font-size:1.1em;
+    text-align:center;
+    color:rgb(0, 102, 234);
+	border-style:solid;
+	border-width:2px;
+	border-color:rgb(0, 102, 234);
+	padding-top:5px;
+	padding-bottom:5px;
+	padding-right:10px;
+	padding-left:10px;
+	margin-right:10px;
+	font-family: Candara;
+		
+	width:auto;
+	min-width:7em;
+	float:left;
+	
+}	
 /* Typography
 -----------------------------------------------------------------------------*/
 h1 {

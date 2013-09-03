@@ -47,4 +47,9 @@
     <servlet-name>EditServlet</servlet-name>
     <servlet-class>com.node.edit.EditServlet</servlet-class>
   </servlet>
+   <servlet>
+  	<display-name>CommentServlet</display-name>
+    <servlet-name>CommentServlet</servlet-name>
+    <servlet-class>com.node.edit.CommentServlet</servlet-class>
+  </servlet>
 </web-app>
