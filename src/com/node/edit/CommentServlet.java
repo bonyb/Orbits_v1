@@ -85,7 +85,7 @@ public class CommentServlet extends HttpServlet {
 				System.out.println("stat-" + stat2.toString());
 				stat2.executeUpdate();
 				RequestDispatcher dispatcher = request
-						.getRequestDispatcher("/AuthLogin");
+						.getRequestDispatcher("/DisplayNodesServlet?projectId="+nodeId);
 				dispatcher.forward(request, response);
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block

@@ -67,7 +67,7 @@ public class EditServlet extends HttpServlet {
 							+ "'");
 			stat1.executeUpdate();
 			RequestDispatcher dispatcher = request
-					.getRequestDispatcher("/AuthLogin");
+					.getRequestDispatcher("/DisplayNodesServlet?projectId="+nodeId);
 			dispatcher.forward(request, response);
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block

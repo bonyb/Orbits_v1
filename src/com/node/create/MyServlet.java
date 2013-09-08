@@ -36,7 +36,7 @@ public class MyServlet extends HttpServlet {
 	 * @see HttpServlet#HttpServlet()
 	 */
 	public MyServlet() {
-		super();
+		 super();
 		// TODO Auto-generated constructor stub
 	}
 
