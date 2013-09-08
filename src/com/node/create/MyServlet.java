@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.node.login.AuthLogin;
+import com.node.display.DisplayNodesServlet;
 import com.node.utilities.UtilityFunctionsImpl;
 
 /**
@@ -29,7 +29,7 @@ import com.node.utilities.UtilityFunctionsImpl;
 @WebServlet("/MyServlet")
 public class MyServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private AuthLogin authLogin = new AuthLogin();
+	private DisplayNodesServlet authLogin = new DisplayNodesServlet();
 	private UtilityFunctionsImpl utility = new UtilityFunctionsImpl();
 
 	/**
@@ -91,7 +91,7 @@ public class MyServlet extends HttpServlet {
 		}
 		// request.
 		RequestDispatcher dispatcher = request
-				.getRequestDispatcher("/AuthLogin");
+				.getRequestDispatcher("/CreateNewTree");
 		dispatcher.forward(request, response);
 	}
 

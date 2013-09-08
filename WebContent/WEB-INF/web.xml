@@ -18,9 +18,9 @@
     <servlet-class>com.node.create.MyServlet</servlet-class>
   </servlet>
   <servlet>
-    <display-name>AuthLogin</display-name>
-    <servlet-name>AuthLogin</servlet-name>
-    <servlet-class>com.node.login.AuthLogin</servlet-class>
+    <display-name>DisplayNodesServlet</display-name>
+    <servlet-name>DisplayNodesServlet</servlet-name>
+    <servlet-class>com.node.display.DisplayNodesServlet</servlet-class>
   </servlet>
   <servlet>
     <display-name>SessionInvalidate</display-name>
@@ -37,19 +37,24 @@
     <servlet-name>DownvoteServlet</servlet-name>
     <servlet-class>com.node.downvote.DownvoteServlet</servlet-class>
   </servlet>
-  <!-- servlet>
-    <display-name>ExportServlet</display-name>
-    <servlet-name>ExportServlet</servlet-name>
-    <servlet-class>com.node.export.ExportServlet</servlet-class>
-  </servlet-->
-    <servlet>
-  	<display-name>EditServlet</display-name>
+  <servlet>
+    <display-name>EditServlet</display-name>
     <servlet-name>EditServlet</servlet-name>
     <servlet-class>com.node.edit.EditServlet</servlet-class>
   </servlet>
-   <servlet>
-  	<display-name>CommentServlet</display-name>
+  <servlet>
+    <display-name>CommentServlet</display-name>
     <servlet-name>CommentServlet</servlet-name>
     <servlet-class>com.node.edit.CommentServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <display-name>CreateNewTree</display-name>
+    <servlet-name>CreateNewTree</servlet-name>
+    <servlet-class>com.node.create.CreateNewTree</servlet-class>
+  </servlet>
+  <servlet>
+    <display-name>AuthAndDisplayProjects</display-name>
+    <servlet-name>AuthAndDisplayProjects</servlet-name>
+    <servlet-class>com.user.project.AuthAndDisplayProjects</servlet-class>
   </servlet>
 </web-app>

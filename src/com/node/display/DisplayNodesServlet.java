@@ -1,4 +1,4 @@
-package com.node.login;
+package com.node.display;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -28,15 +28,15 @@ import com.node.utilities.UtilityFunctionsImpl;
 /**
  * Servlet implementation class AuthLogin
  */
-@WebServlet("/AuthLogin")
-public class AuthLogin extends HttpServlet {
+@WebServlet("/DisplayNodesServlet")
+public class DisplayNodesServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private UtilityFunctionsImpl utility = new UtilityFunctionsImpl();
 
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
-	public AuthLogin() {
+	public DisplayNodesServlet() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
@@ -61,8 +61,7 @@ public class AuthLogin extends HttpServlet {
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 
-		String username = request.getParameter("username");
-		String password = request.getParameter("password");
+		String projectId= request.getParameter("projectId");
 		HttpSession session = request.getSession(true);
 		int personID = 0;
 		if (null != session.getAttribute("userID")) {
@@ -70,8 +69,15 @@ public class AuthLogin extends HttpServlet {
 			personID = Integer.parseInt(session.getAttribute("userID")
 					.toString());
 			try {
-				setAttributes(personID, displayResults(personID), request,
+				HashMap<String,List<String>> nodemap=displayResults(personID,projectId);
+				if(!nodemap.isEmpty()){
+				setAttributes(personID, nodemap, request,
 						response);
+				}else{
+					// no projects 
+					RequestDispatcher dispatcher = request.getRequestDispatcher("main.jsp");
+					dispatcher.forward(request, response);
+				}
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -82,6 +88,8 @@ public class AuthLogin extends HttpServlet {
 		} else {
 			// needs to be authenticated
 			try {
+				String username = request.getParameter("username");
+				String password = request.getParameter("password");
 				personID = authLogin(username, password);
 				if (personID == 0) {
 					request.setAttribute("results", "none");
@@ -94,7 +102,7 @@ public class AuthLogin extends HttpServlet {
 					newsession.setAttribute("userID", personID);
 					HashMap<String, List> hashMap = new HashMap<String, List>();
 					try {
-						setAttributes(personID, displayResults(personID),
+						setAttributes(personID, displayResults(personID,projectId),
 								request, response);
 
 					} catch (ClassNotFoundException e) {
@@ -138,7 +146,7 @@ public class AuthLogin extends HttpServlet {
 
 	}
 
-	HashMap<String, List<String>> displayResults(int personId)
+	HashMap<String, List<String>> displayResults(int personId,String projectId)
 			throws ClassNotFoundException, SQLException {
 		Class.forName("com.mysql.jdbc.Driver");
 		Connection con = DriverManager
@@ -149,9 +157,10 @@ public class AuthLogin extends HttpServlet {
 		// java.sql.PreparedStatement stat=
 		// con.prepareStatement("select * from Node where AuthorId='"+personId+"' order by Parent ASC");
 		java.sql.PreparedStatement stat = con
-				.prepareStatement("select * from Node order by Parent ASC");
+				.prepareStatement("select * from Node where ProjectId='"+projectId+"' order by Parent ASC");
 		ResultSet result = stat.executeQuery();
 		HashMap<String, List<String>> hashMap = new HashMap<String, List<String>>();
+		if( null != result ){
 		while (result.next()) {
 			List<String> messages = new ArrayList<String>();
 			messages.add(result.getString(2));
@@ -185,6 +194,7 @@ public class AuthLogin extends HttpServlet {
 			// Get the related Tags
 			retrieveTags(nodeId, messages);
 			hashMap.put(nodeId, messages);
+		}
 		}
 		return hashMap;
 	}
@@ -221,8 +231,7 @@ public class AuthLogin extends HttpServlet {
 			throws ServletException, IOException, ClassNotFoundException,
 			SQLException {
 		// find number of parents
-		// System.out.println("no of parents"+noofparents(result));
-		ArrayList<Integer> parentResult = noofparents(result);
+		
 		// create new set of hashmaps for nodes based on no of parents
 
 		HashMap<String, List> hashMap0 = new HashMap<String, List>();

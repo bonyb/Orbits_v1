@@ -9,6 +9,7 @@
 <link href="styles/style.css" rel="stylesheet" type="text/css" />
 <title>Insert title here</title>
 
+<!-- BLAH -->
 
 <!-- Le styles -->
     <link rel="stylesheet" href="styles/bootstrap/css/bootstrap.css"></link><style type="text/css">
@@ -64,7 +65,7 @@
 			}
 		%>
 
-		<form class="form-signin" action="AuthLogin" method="POST">
+		<form class="form-signin" action="AuthAndDisplayProjects" method="POST">
 			<h2 class="form-signin-heading">Please sign in</h2>
 			
 			<input class="input-block-level" type="text" name="username" placeholder="Username"> </input> 

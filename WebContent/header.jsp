@@ -26,7 +26,7 @@ body {
 					<span class="icon-bar"></span><span class="icon-bar"></span><span
 						class="icon-bar"></span>
 				</button>
-				<a class="brand" href="#"> Orbits </a>
+				<a class="brand" href="AuthAndDisplayProjects"> Orbits </a>
 				<div class="nav-collapse collapse">
 					<ul class="nav">
 						<li class="active"><a href="#"> New Project </a>
