@@ -28,7 +28,7 @@ public class AuthAndDisplayProjects extends HttpServlet {
      * @see HttpServlet#HttpServlet()
      */
     public AuthAndDisplayProjects() {
-        super();
+         super();
         // TODO Auto-generated constructor stub
     }
 
