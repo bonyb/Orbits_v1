@@ -74,9 +74,16 @@ public class CreateNewTree extends HttpServlet {
 			java.sql.PreparedStatement stat3 = con.prepareStatement("INSERT INTO Node(Title,AuthorId,CreationTimeDate,ProjectId,Parent,Levelno,countChildren,UpVote,DownVote) VALUES ('"+ escapeTexts[0]+ "','"+ userId+ "','"+ dt+ "',"+projectID+",0,1,0,0,0)");
 			stat3.executeUpdate();
 			enterContributors(request,response,projectID);
-		
+			
+			//get the nodeId that just got created
+			java.sql.PreparedStatement stat4 = con.prepareStatement("Select NodeID from Node where ProjectId='"+ projectID);
+			ResultSet resultNode= stat4.executeQuery();
+			resultNode.first();
+			String nodeId=resultNode.getString(1);
+			
+			
 		// request.
-		String path="/DisplayNodesServlet?projectId="+projectID;
+		String path="/DisplayNodesServlet?projectId="+projectID+"&selectedNodeId="+nodeId;
 		RequestDispatcher dispatcher = request
 				.getRequestDispatcher(path);
 		dispatcher.forward(request, response);

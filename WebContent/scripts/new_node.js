@@ -44,27 +44,16 @@ $(document).ready(function() {
 	
 	var node_des;
 	for(var i=0;i<nodeArray.length;i++)
-	{		
-    	// Click on Node \\
-		/*	if($(nodeArray[i]).hasClass('circle')){
-		alert("nodeArray[i]-"+nodeArray[i]);
-		}*/
-		
-		var nodeid="#"+jQuery(this).attr("id");
-		var node=nodeArray[i];
+	{	
 		$(nodeArray[i]).click(function(){  
     		var contentPanelId = jQuery(this).attr("id");
     		var idCheck = "#des_"+contentPanelId;
-    		
-    		// make the title same color
-    		
-    		//alert("colorcheck2+"+$(this).css('background-color'));
     		var titleid="#title_" + contentPanelId;
-    		$(titleid).css('color',$(this).css('background-color'));
-    		
+    		$(titleid).css('background-color',$(this).css('background-color'));
+    	//	$(idCheck).slideUp();
     		if(idCheck != node_des)
     		{
-	    		$(node_des).slideUp(); 
+    			$(node_des).slideUp(); 
 	    		node_des = "#des_"+contentPanelId;
 	    		$(node_des).slideDown();    	
     		}
@@ -76,8 +65,8 @@ $(document).ready(function() {
 	var moveDown = -260; 
 	var nodePositionArray = new Array();
 	for(var i=0;i<nodeArray.length;i++) {	 
-		var nodeID = jQuery(this).attr("id"); // Set the position of the node from the cache 
-		 // Retreive nodePositionArray from cache 
+		var nodeID = jQuery(this).attr("id");  
+		
 		$(nodeArray[i]).position(nodePositionArray[nodeID]); 
 		// Hover on Node \\ 
 		$(nodeArray[i]).hover(function(e){ 

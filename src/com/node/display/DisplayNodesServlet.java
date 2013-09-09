@@ -62,6 +62,8 @@ public class DisplayNodesServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 
 		String projectId= request.getParameter("projectId");
+		String selectedNodeId=request.getParameter("selectedNodeId");
+		
 		HttpSession session = request.getSession(true);
 		int personID = 0;
 		if (null != session.getAttribute("userID")) {
@@ -72,7 +74,7 @@ public class DisplayNodesServlet extends HttpServlet {
 				HashMap<String,List<String>> nodemap=displayResults(personID,projectId);
 				if(!nodemap.isEmpty()){
 				setAttributes(personID, nodemap, request,
-						response,projectId);
+						response,projectId,selectedNodeId);
 				}else{
 					// no projects 
 					RequestDispatcher dispatcher = request.getRequestDispatcher("main.jsp");
@@ -103,7 +105,7 @@ public class DisplayNodesServlet extends HttpServlet {
 					HashMap<String, List> hashMap = new HashMap<String, List>();
 					try {
 						setAttributes(personID, displayResults(personID,projectId),
-								request, response,projectId);
+								request, response,projectId,selectedNodeId);
 
 					} catch (ClassNotFoundException e) {
 						// TODO Auto-generated catch block
@@ -227,7 +229,7 @@ public class DisplayNodesServlet extends HttpServlet {
 	}
 
 	void setAttributes(int personID, HashMap<String, List<String>> result,
-			HttpServletRequest request, HttpServletResponse response,String projectId)
+			HttpServletRequest request, HttpServletResponse response,String projectId,String selectedNodeId)
 			throws ServletException, IOException, ClassNotFoundException,
 			SQLException {
 		// find number of parents
@@ -330,7 +332,24 @@ public class DisplayNodesServlet extends HttpServlet {
 
 		// setting the comments
 		request.setAttribute("comments", retrieveComments());
-		RequestDispatcher dispatcher = request.getRequestDispatcher("main.jsp?projectId="+projectId);
+		
+		//means the node is selected from the projects page
+		if(null==selectedNodeId || selectedNodeId.isEmpty() || selectedNodeId.length() ==0){
+			Class.forName("com.mysql.jdbc.Driver");
+			Connection con = DriverManager
+					.getConnection("jdbc:mysql://localhost:3306/test");
+			// Connection con =
+			// DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"
+			// +"user=orbits&password=orbits");
+			java.sql.PreparedStatement stat = con
+					.prepareStatement("select NodeID from Node where ProjectId='"
+							+ projectId + "' and Parent=0");
+			ResultSet firstNode = stat.executeQuery();
+			firstNode.first();
+			selectedNodeId=firstNode.getString(1);
+			
+		}
+		RequestDispatcher dispatcher = request.getRequestDispatcher("main.jsp?projectId="+projectId+"&selectedNodeId="+selectedNodeId);
 		dispatcher.forward(request, response);
 	}
 

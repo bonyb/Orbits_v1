@@ -66,7 +66,7 @@ public class DownvoteServlet extends HttpServlet {
 							+ " Where NodeID='" + nodeID + "'");
 			stat1.executeUpdate();
 			RequestDispatcher dispatcher = request
-					.getRequestDispatcher("/DisplayNodesServlet?projectId="+projectId);
+					.getRequestDispatcher("/DisplayNodesServlet?projectId="+projectId+"&selectedNodeId="+nodeID);
 			dispatcher.forward(request, response);
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block

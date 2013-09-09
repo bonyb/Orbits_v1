@@ -36,7 +36,7 @@
 	<script type="text/javascript" src="scripts/editNode.js"></script>
 	<script type="text/javascript" src="scripts/new_node.js"></script>
 </head>
-<body data-library="jquery" onload="getCookie()" onunload="setCookie()">
+<body data-library="jquery" onload="getCookie(<%=request.getParameter("selectedNodeId")%>)" onunload="setCookie()">
 	<%@include file="header.jsp"%>
 	<% HashMap<String,Color> colorMap= new HashMap<String,Color>(); %>
 <div class="mainContainer">
@@ -45,6 +45,7 @@
 
 			<%
 			String projectId=request.getParameter("projectId");
+			String selectedNodeId=request.getParameter("selectedNodeId");
 			String userID= session.getAttribute("userID").toString();
 			//out.println("Hello - "+userID);
 				int i = 0;

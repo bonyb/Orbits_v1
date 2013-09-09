@@ -37,8 +37,20 @@ function setCookie()
 		
 	}	
 	
-	function getCookie()
+	function getCookie(selectedNodeid)
 	{
+	//create focus on load
+	var nodeArray = document.getElementsByClassName("w");
+	for(var i=0;i<nodeArray.length;i++)
+	{	
+		if(selectedNodeid == nodeArray[i].id){
+			var descId = "#des_"+nodeArray[i].id;
+			var titleid="#title_" + nodeArray[i].id;
+			var node="#"+nodeArray[i].id;
+			$(titleid).css('background-color',$(node).css('background-color'));
+			$(descId).show(); 
+		}
+	}	
 	var nodeArrayCache = document.getElementsByClassName("w");
 	var c_value = document.cookie;
 	var c_start = c_value.indexOf(" "+"nodePos=");
@@ -71,12 +83,23 @@ function setCookie()
 		}
 		for(var i=0;i<nodeArrayCache.length;i++)
 		{
-			var src = $(nodeArrayCache[i]).next().html();
-			var target1 = nodeArrayCache[i].id;
-
+			var currentNode = nodeArrayCache[i].id;
+			var parentNode = $(nodeArrayCache[i]).next().html();
+			var cC="#"+currentNode;
+			var nodeColor = $(cC).children(".node_color").html();
+			
+			var pC="#"+parentNode;
+			var parentColor = $(pC).children(".node_color").html();
+			
+			
 			if(i!=0)
 			{
-				jsPlumb.connect({source:src, target:target1, anchor:"Center"});
+				jsPlumb.connect({source:parentNode, target:currentNode, anchor:"Center", 
+					paintStyle:{
+						gradient:{ stops:[ [ 0, nodeColor ], [ 1, parentColor ] ] },
+						lineWidth:3,
+						strokeStyle:'rgba(255, 255, 255, 1.0)'
+					}});
 			}				
 		} 
 	}else{
@@ -84,12 +107,22 @@ function setCookie()
 		nodeArray = document.getElementsByClassName("w");
 		for(var i=0;i<nodeArray.length;i++)
 		{
-			var src = $(nodeArray[i]).next().html();
-			var target1 = nodeArray[i].id;
-
+			var currentNode = nodeArrayCache[i].id;
+			var parentNode = $(nodeArrayCache[i]).next().html();
+			var cC="#"+currentNode;
+			var nodeColor = $(cC).children(".node_color").html();
+			
+			var pC="#"+parentNode;
+			var parentColor = $(pC).children(".node_color").html();
+						
 			if(i!=0)
 			{
-				jsPlumb.connect({source:src, target:target1, anchor:"Center"});
+				jsPlumb.connect({source:parentNode, target:currentNode, anchor:"Center", 
+					paintStyle:{
+						gradient:{ stops:[ [ 0, nodeColor ], [ 1, parentColor ] ] },
+						lineWidth:3,
+						strokeStyle:'rgba(255, 255, 255, 1.0)'
+					}});	
 			}				
 		}
 	}

@@ -80,6 +80,10 @@ public class MyServlet extends HttpServlet {
 			int nodeId = insertvalues(title, parentId, description, userId,projectId);
 
 			inserttagvalues(tags, nodeId);
+			// request.
+			RequestDispatcher dispatcher = request
+					.getRequestDispatcher("/DisplayNodesServlet?projectId="+projectId+"&selectedNodeId="+nodeId);
+			dispatcher.forward(request, response);
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -90,10 +94,7 @@ public class MyServlet extends HttpServlet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		// request.
-		RequestDispatcher dispatcher = request
-				.getRequestDispatcher("/DisplayNodesServlet");
-		dispatcher.forward(request, response);
+		
 	}
 
 	int insertvalues(String title, String parentId, String description,
