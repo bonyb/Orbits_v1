@@ -51,6 +51,7 @@ public class CommentServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		String nodeId = request.getParameter("nodeID");
 		String comment = request.getParameter("comment");
+		String projectId=request.getParameter("projectId");
 		HttpSession session = request.getSession(true);
 		int personID = 0;
 		if (null != session.getAttribute("userID")) {
@@ -85,7 +86,7 @@ public class CommentServlet extends HttpServlet {
 				System.out.println("stat-" + stat2.toString());
 				stat2.executeUpdate();
 				RequestDispatcher dispatcher = request
-						.getRequestDispatcher("/DisplayNodesServlet?projectId="+nodeId);
+						.getRequestDispatcher("/DisplayNodesServlet?projectId="+projectId);
 				dispatcher.forward(request, response);
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block

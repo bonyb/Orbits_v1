@@ -45,6 +45,7 @@ public class UpvoteServlet extends HttpServlet {
 			HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		String nodeID = request.getParameter("nodeID").toString();
+		String projectId=request.getParameter("projectId");
 		System.out.println("parentId--" + nodeID);
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
@@ -66,7 +67,7 @@ public class UpvoteServlet extends HttpServlet {
 							+ " Where NodeID='" + nodeID + "'");
 			stat1.executeUpdate();
 			RequestDispatcher dispatcher = request
-					.getRequestDispatcher("/DisplayNodesServlet?projectId="+nodeID);
+					.getRequestDispatcher("/DisplayNodesServlet?projectId="+projectId);
 			dispatcher.forward(request, response);
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block

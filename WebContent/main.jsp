@@ -251,19 +251,17 @@
 						<div class="voting_form up_vote_btn">
 						<form action="UpvoteServlet" method="post">
 							<input type="hidden" value='${nodeno}' name="nodeID" /> 
-							<!-- input class="upVote_btn" type="submit" id="up_btn_<%=key%>" value=""> -->
+							<input type="hidden" value="<%=projectId %>" name="projectId" />
 							<input type="image" src="images/icons/agree_icon.png" alt="Submit" id="up_btn_<%=key%>" align="right"width="48" height="20">
-							<!-- img class="delete_btn" id="up_btn_<%=key%>" src="images/icons/up_chosen.png" /-->
-						<%=value.get(7) %></form> 
+							<%=value.get(7) %></form> 
 						</div>			
 												
 						<div class="voting_form down_vote_btn">
 						<form  action="DownvoteServlet" method="post">
 							<input type="hidden" value='${nodeno}' name="nodeID" /> 
-							<!-- input class="downVote_btn" type="submit" id="down_btn_<%=key%>" value=""> -->
+							<input type="hidden" value="<%=projectId %>" name="projectId" />
 							<input type="image" src="images/icons/disagree_icon.png" alt="Submit" id="down_btn_<%=key%>" align="right"width="48" height="20">
-							<!-- img class="edit_btn" id="down_btn_<%=key%>" src="images/icons/down_chosen.png" /-->
-						<%=value.get(8) %></form>
+							<%=value.get(8) %></form>
 						</div>
 						
 					
@@ -309,6 +307,7 @@
 						<div class="editNode" id="editNodeDiv_<%=key%>" style="display:none">
 						<form action="EditServlet" method="post" id="editForm_<%=key%>">
 							<input type="hidden" value='${nodeno}' name="nodeID" /> 
+							<input type="hidden" value="<%=projectId %>" name="projectId" />
 							<input type="image" src="images/icons/node-checkbutton-v1.png" alt="Submit" align="left" width="48" height="39">
 						</form> 
 						<a href="#" id="cancelEdit_<%=key%>" onclick="cancelEdit(<%=key%>)"><img src="images/icons/node-deletebutton-v1.png" alt="Cancel Edit" /></a>
@@ -393,6 +392,7 @@
 						<form action="CommentServlet" method="post" id="commentForm_<%=key%>" class="comment_form">
 						<textarea id="comment_<%=key%>" class="commentSection" rows="4" cols="50" maxlength="250" name="comment" form="commentForm_<%=key%>"></textarea>
 							<input type="hidden" value='${nodeno}' name="nodeID" /> 
+							<input type="hidden" value="<%=projectId %>" name="projectId" />
 							<input type="image" class="comment_submit_btn" src="images/icons/node-checkbutton-v1.png" alt="Submit" width="48" height="39"/>
 							<a href="#" class="comment_cancel_btn" id="cancelEdit_<%=key%>" onclick="cancelComment(<%=key%>)"><img src="images/icons/node-deletebutton-v1.png" alt="Cancel Comment" /></a>
 						</form> 

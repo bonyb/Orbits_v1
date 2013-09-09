@@ -50,6 +50,7 @@ public class EditServlet extends HttpServlet {
 		String nodeId = request.getParameter("nodeID");
 		String title = request.getParameter("title");
 		String description = request.getParameter("description");
+		String projectId=request.getParameter("projectId");
 		String[] escapetexts = utility.setEcsapeTitleDesc(title, description);
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
@@ -67,7 +68,7 @@ public class EditServlet extends HttpServlet {
 							+ "'");
 			stat1.executeUpdate();
 			RequestDispatcher dispatcher = request
-					.getRequestDispatcher("/DisplayNodesServlet?projectId="+nodeId);
+					.getRequestDispatcher("/DisplayNodesServlet?projectId="+projectId);
 			dispatcher.forward(request, response);
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
