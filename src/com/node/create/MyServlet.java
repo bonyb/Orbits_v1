@@ -65,6 +65,7 @@ public class MyServlet extends HttpServlet {
 		String title = request.getParameter("title");
 		String parentId = request.getParameter("parentId");
 		String description = request.getParameter("description");
+		String projectId=request.getParameter("projectId");
 		List<String> tags = new ArrayList<String>();
 		if (!request.getParameter("tag1").isEmpty())
 			tags.add(request.getParameter("tag1"));
@@ -76,7 +77,7 @@ public class MyServlet extends HttpServlet {
 		// String lastname= request.getParameter("last_name");
 
 		try {
-			int nodeId = insertvalues(title, parentId, description, userId);
+			int nodeId = insertvalues(title, parentId, description, userId,projectId);
 
 			inserttagvalues(tags, nodeId);
 		} catch (ClassNotFoundException e) {
@@ -91,12 +92,12 @@ public class MyServlet extends HttpServlet {
 		}
 		// request.
 		RequestDispatcher dispatcher = request
-				.getRequestDispatcher("/CreateNewTree");
+				.getRequestDispatcher("/DisplayNodesServlet");
 		dispatcher.forward(request, response);
 	}
 
 	int insertvalues(String title, String parentId, String description,
-			String userId) throws ClassNotFoundException, SQLException,
+			String userId,String projectId) throws ClassNotFoundException, SQLException,
 			ParseException {
 		Class.forName("com.mysql.jdbc.Driver");
 		Connection con = DriverManager
@@ -129,7 +130,7 @@ public class MyServlet extends HttpServlet {
 		String dt = utility.getCuttentDateTime();
 		String[] escapetexts = utility.setEcsapeTitleDesc(title, description);
 		java.sql.PreparedStatement stat2 = con
-				.prepareStatement("INSERT INTO Node(Title,Description,AuthorId,Parent,Levelno,countChildren,UpVote,DownVote,CreationTimeDate) VALUES ('"
+				.prepareStatement("INSERT INTO Node(Title,Description,AuthorId,Parent,Levelno,countChildren,UpVote,DownVote,CreationTimeDate,ProjectId) VALUES ('"
 						+ escapetexts[0]
 						+ "','"
 						+ escapetexts[1]
@@ -139,7 +140,7 @@ public class MyServlet extends HttpServlet {
 						+ parentId
 						+ ","
 						+ levelNo
-						+ ",0,0,0,'" + dt + "');");
+						+ ",0,0,0,'" + dt + "',"+projectId+");");
 		stat2.executeUpdate();
 		// get the node id
 		java.sql.PreparedStatement stat3 = con

@@ -72,7 +72,7 @@ public class DisplayNodesServlet extends HttpServlet {
 				HashMap<String,List<String>> nodemap=displayResults(personID,projectId);
 				if(!nodemap.isEmpty()){
 				setAttributes(personID, nodemap, request,
-						response);
+						response,projectId);
 				}else{
 					// no projects 
 					RequestDispatcher dispatcher = request.getRequestDispatcher("main.jsp");
@@ -103,7 +103,7 @@ public class DisplayNodesServlet extends HttpServlet {
 					HashMap<String, List> hashMap = new HashMap<String, List>();
 					try {
 						setAttributes(personID, displayResults(personID,projectId),
-								request, response);
+								request, response,projectId);
 
 					} catch (ClassNotFoundException e) {
 						// TODO Auto-generated catch block
@@ -227,7 +227,7 @@ public class DisplayNodesServlet extends HttpServlet {
 	}
 
 	void setAttributes(int personID, HashMap<String, List<String>> result,
-			HttpServletRequest request, HttpServletResponse response)
+			HttpServletRequest request, HttpServletResponse response,String projectId)
 			throws ServletException, IOException, ClassNotFoundException,
 			SQLException {
 		// find number of parents
@@ -330,7 +330,7 @@ public class DisplayNodesServlet extends HttpServlet {
 
 		// setting the comments
 		request.setAttribute("comments", retrieveComments());
-		RequestDispatcher dispatcher = request.getRequestDispatcher("main.jsp");
+		RequestDispatcher dispatcher = request.getRequestDispatcher("main.jsp?projectId="+projectId);
 		dispatcher.forward(request, response);
 	}
 
