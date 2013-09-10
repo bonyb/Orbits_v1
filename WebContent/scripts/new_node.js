@@ -42,7 +42,7 @@ $(document).ready(function() {
 		$(nodeTagArray[i]).hide();
 	}
 	
-	var node_des;
+	
 	for(var i=0;i<nodeArray.length;i++)
 	{	
 		var commentThread="#node_comments_"+nodeArray[i].id;
@@ -56,16 +56,19 @@ $(document).ready(function() {
     		var idCheck = "#des_"+contentPanelId;
     		var titleid="#title_" + contentPanelId;
     		$(titleid).css('background-color',$(this).css('background-color'));
-    	//	$(idCheck).slideUp();
-    		if(idCheck != node_des)
+    		//to check if the node has been set or not. 
+    		for(var x=0;x<nodeArray.length;x++)
     		{
-    			$(node_des).slideUp(); 
-	    		node_des = "#des_"+contentPanelId;
-	    		$(node_des).slideDown();    	
+    		var shownDiv="#des_"+nodeArray[x].id;	
+    		if($(shownDiv).is(":visible")){
+    			$(shownDiv).hide(); 
+    			$(idCheck).show();
+    			break;
     		}
+    		}
+    		
     	});
-    	//alert("colorArray+"+colorArray[i]);
-	}	
+    }	
 	var node_pop; 
 	var moveLeft = -60; 
 	var moveDown = -260; 
