@@ -45,6 +45,12 @@ $(document).ready(function() {
 	var node_des;
 	for(var i=0;i<nodeArray.length;i++)
 	{	
+		var commentThread="#node_comments_"+nodeArray[i].id;
+		if(!$.trim($(commentThread).html())){
+			var discussionTh="#discussion_thread_"+nodeArray[i].id;
+			$(discussionTh).hide();
+		}
+		
 		$(nodeArray[i]).click(function(){  
     		var contentPanelId = jQuery(this).attr("id");
     		var idCheck = "#des_"+contentPanelId;

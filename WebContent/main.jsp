@@ -44,6 +44,7 @@
 		<div id="demo">
 
 			<%
+			String username= session.getAttribute("username").toString();
 			String projectId=request.getParameter("projectId");
 			String selectedNodeId=request.getParameter("selectedNodeId");
 			String userID= session.getAttribute("userID").toString();
@@ -150,7 +151,7 @@
 				<div class="node_map_title"><%=value.get(0) %></div>
 				<div class="ep"></div>
 				
-				<div class="node_color">#<%=parentColor.getRed()%><%=parentColor.getGreen()%><%=parentColor.getBlue()%></div>
+				<div class="node_color" style="display:none;">#<%=parentColor.getRed()%><%=parentColor.getGreen()%><%=parentColor.getBlue()%></div>
 			</div>
 			<%} %>
 			
@@ -275,12 +276,13 @@
 					
 					<div class="text_edit_bar"></div>
 						<!-- Display Description -->
-					<div class="node_description" id="node_description_<%=key%>"><%=value.get(1)%></div>
+						<% if(value.get(1) != null){%>
+					<div class="node_description" id="node_description_<%=key%>">
+					<%=value.get(1)%></div> <%} %>
 
 						<!-- Edit Description -->
-						<textarea class="editDesc" rows="4" cols="50" maxlength="250" name="description" style="display:none;" form="editForm_<%=key%>"><%=value.get(1)%></textarea>
-					
-					<div class="node_content_under_bar">
+						<textarea class="editDesc" rows="4" cols="50" maxlength="250" name="description" style="display:none;" form="editForm_<%=key%>"><%if(value.get(1)!=null){%><%=value.get(1)%><%} %></textarea>
+						<div class="node_content_under_bar">
 					
 					
 						<div class="expertise">
@@ -326,7 +328,7 @@
 			<div class="add_node_title">
 					<form action="MyServlet" method="POST">
 						<input class="input_title" type="text" name="title" placeholder="Title"></div>
-						<div class="author_name"><%=value.get(5)%></div>
+						<div class="author_name"><%=username%></div>
 						<div class="creation_date"><%=value.get(9) %></div>
 						<div class="text_edit_bar"></div>
 						<textarea class="node_description_input" rows="4" cols="50" maxlength="250" name="description"></textarea> 

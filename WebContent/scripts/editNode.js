@@ -64,10 +64,11 @@ function cancelAdd(key){
 
 // open comment form section
 function submitComment(key){
-	
+	var discussionTh="#discussion_thread_"+key;
 	var commentLabel="#commentDiv_"+key;
 	var commentArea="#comment_"+key;
 	//$(titleLabel).hide();
+	$(discussionTh).show();
 	$(commentLabel).show();
 	// focus on the comment text area
 	$(commentArea).focus();
@@ -76,6 +77,11 @@ function submitComment(key){
 
 // cancel the comment area
 function cancelComment(key){
+	var commentThread="#node_comments_"+key;
+	if(!$.trim($(commentThread).html())){
+		var discussionTh="#discussion_thread_"+key;
+		$(discussionTh).hide();
+	}
 	var commentLabel="#commentDiv_"+key;
 	$(commentLabel).hide();
 		
