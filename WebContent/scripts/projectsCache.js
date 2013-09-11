@@ -14,7 +14,7 @@ $(document).ready(function(){
 
 	 $(document).scroll(function(e){
 		 	y=$(document).scrollTop();
-			$('.hello').text("c_value"+$(document).scrollTop());
+			//$('.hello').text("c_value"+$(document).scrollTop());
 		});
 });
 /**
