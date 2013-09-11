@@ -76,7 +76,7 @@ public class CreateNewTree extends HttpServlet {
 			enterContributors(request,response,projectID);
 			
 			//get the nodeId that just got created
-			java.sql.PreparedStatement stat4 = con.prepareStatement("Select NodeID from Node where ProjectId='"+ projectID);
+			java.sql.PreparedStatement stat4 = con.prepareStatement("Select NodeID from Node where ProjectId="+ projectID);
 			ResultSet resultNode= stat4.executeQuery();
 			resultNode.first();
 			String nodeId=resultNode.getString(1);
