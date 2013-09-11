@@ -1,26 +1,41 @@
 /**
  * 
  */
+$(document).ready(function(){
+	//posx=$(window).scrollTop();
+	//posxn=$(document).scrollTop();
+	//$("#node_field").scrollIntoView();
+	 
+	 scrOfY = window.pageYOffset;
+	 bodY=document.body.scrollTop;
+	 scrOfX = window.pageXOffset;
+	 //testy= $(window).scrollTop();
+	 testy= $('.projectField').scrollTop();
 
+	 $(document).scroll(function(e){
+		 	y=$(document).scrollTop();
+			$('.hello').text("c_value"+$(document).scrollTop());
+		});
+});
 /**
  * Set and get the cookies for the page/tree
  */
 
 function setProjectCookie()
 	{ 
-		var windowy= $(window).scrollTop();
+		var windowy= $(document).scrollTop();
 		var windowx= $(window).scrollLeft();
 		var nodeArrayCache = document.getElementsByClassName("new_project");
 		var projectPositionArray= new Array();
 		for(var i=0;i<nodeArrayCache.length;i++){
 			var offset =$(nodeArrayCache[i]).offset();
-			var otop=offset.top+windowy;
-			var oleft=offset.left+windowx;
+			var otop=offset.top;
+			var oleft=offset.left+windowx;		
+			
 			projectPositionArray[i]="left:" + oleft + "top:" + otop;
 		    }
 		var c_name="projectPos";
 		document.cookie=c_name + "=" + projectPositionArray;
-		
 	}	
 	
 function getProjectCookie()
