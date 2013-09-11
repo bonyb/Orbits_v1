@@ -183,16 +183,25 @@ public class AuthAndDisplayProjects extends HttpServlet {
 					+ userId + "'");
 			ResultSet result = stat.executeQuery();
 			while(result.next()){
-				java.sql.PreparedStatement stat2 = con.prepareStatement("select ProjectID,Title,CreationTimeDate from Tree where ProjectID='"+ result.getInt(1) + "'");
+				java.sql.PreparedStatement stat2 = con.prepareStatement("select ProjectID,Title,CreationTimeDate,AuthorID from Tree where ProjectID='"+ result.getInt(1) + "'");
 				ResultSet projectdets = stat2.executeQuery();
 				projectdets.first();
 				if(null != projectdets){
 						List<String> messages = new ArrayList<String>();
 						messages.add(projectdets.getString("Title"));
 						messages.add(projectdets.getString("CreationTimeDate"));
+						
+						//get the author id
+						int authorId=projectdets.getInt("AuthorID");
+						java.sql.PreparedStatement stat1 = con.prepareStatement("select Username from Person where PersonID='"
+								+ authorId + "'");
+						ResultSet authorRes = stat1.executeQuery();
+						authorRes.first();
+						messages.add(authorRes.getString(1));
 						projects.put(projectdets.getString("ProjectID"), messages);
 										
 					}
+				
 			}
 
 			

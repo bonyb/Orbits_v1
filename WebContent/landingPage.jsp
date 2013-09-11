@@ -96,7 +96,7 @@ if (null != hashmapContri && !hashmapContri.isEmpty()) {
 		<div class="new_project" id="project_<%=key%>">
 			<div class="project_title"><%=value.get(0)%></div>
 			<div class="project_date"><%=value.get(1)%></div>
-			
+			<div class="author_name"><%=value.get(2)%></div>
 			<a class="project_link octagon" href="DisplayNodesServlet?projectId=<%=key%>">
 				<img src="images/shadow-node.png" style="width:100%;height:243%;position:absolute;top:-71%;left:0%;"/>
 			</a>	
