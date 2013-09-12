@@ -195,7 +195,7 @@ public class AuthAndDisplayProjects extends HttpServlet {
 	
 	/**
 	 * Get the projects that the user contributed in
-	 * @param userId
+	 * @param userId 
 	 * @return
 	 */
 	private HashMap<String, List<String>> getContributions(int userId) {
