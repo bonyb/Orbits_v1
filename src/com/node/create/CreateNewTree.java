@@ -134,8 +134,8 @@ public class CreateNewTree extends HttpServlet {
 				
 			}
 		}
-		java.sql.PreparedStatement stat2 = con.prepareStatement("INSERT INTO PersonTreeCon VALUES ("+ projectID+","+ userId+ ")");
-		stat2.executeUpdate();
+		//java.sql.PreparedStatement stat2 = con.prepareStatement("INSERT INTO PersonTreeCon VALUES ("+ projectID+","+ userId+ ")");
+		//stat2.executeUpdate();
 		
 		
 		}catch (ClassNotFoundException e) {

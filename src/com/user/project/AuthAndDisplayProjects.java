@@ -167,7 +167,7 @@ public class AuthAndDisplayProjects extends HttpServlet {
 	}
 
 	private String numberofContributors(String projectId){
-		String number="0";
+		Integer number=1;
 		try {
 		Class.forName("com.mysql.jdbc.Driver");
 		Connection con;
@@ -182,7 +182,7 @@ public class AuthAndDisplayProjects extends HttpServlet {
 				+ projectId + "'");
 		ResultSet result = stat.executeQuery();
 		result.first();
-		number=result.getString(1);
+		number=Integer.parseInt(result.getString(1))+1;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -190,7 +190,7 @@ public class AuthAndDisplayProjects extends HttpServlet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return number;
+		return number.toString();
 	}
 	
 	/**
