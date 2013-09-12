@@ -38,7 +38,11 @@ public class CommentServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		String nodeID = request.getParameter("nodeID").toString();
+		String projectId=request.getParameter("projectId");
+		String aDestinationPage="DisplayNodesServlet?projectId="+projectId+"&selectedNodeId="+nodeID;
+		String urlWithSessionID = response.encodeRedirectURL(aDestinationPage.toString());
+	    response.sendRedirect( urlWithSessionID );
 	}
 
 	/**
@@ -85,9 +89,9 @@ public class CommentServlet extends HttpServlet {
 								+ escapetexts[0] + "')");
 				System.out.println("stat-" + stat2.toString());
 				stat2.executeUpdate();
-				RequestDispatcher dispatcher = request
-						.getRequestDispatcher("/DisplayNodesServlet?projectId="+projectId+"&selectedNodeId="+nodeId);
-				dispatcher.forward(request, response);
+				String aDestinationPage="DisplayNodesServlet?projectId="+projectId+"&selectedNodeId="+nodeId;
+				String urlWithSessionID = response.encodeRedirectURL(aDestinationPage.toString());
+			    response.sendRedirect( urlWithSessionID );
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

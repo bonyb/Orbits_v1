@@ -74,7 +74,7 @@ public class DisplayNodesServlet extends HttpServlet {
 				HashMap<String,List<String>> nodemap=displayResults(personID,projectId);
 				if(!nodemap.isEmpty()){
 				setAttributes(personID, nodemap, request,
-						response,projectId,selectedNodeId);
+						response,projectId,selectedNodeId,maxLevel(projectId));
 				}else{
 					// no projects 
 					RequestDispatcher dispatcher = request.getRequestDispatcher("main.jsp");
@@ -105,7 +105,7 @@ public class DisplayNodesServlet extends HttpServlet {
 					HashMap<String, List> hashMap = new HashMap<String, List>();
 					try {
 						setAttributes(personID, displayResults(personID,projectId),
-								request, response,projectId,selectedNodeId);
+								request, response,projectId,selectedNodeId,maxLevel(projectId));
 
 					} catch (ClassNotFoundException e) {
 						// TODO Auto-generated catch block
@@ -146,6 +146,37 @@ public class DisplayNodesServlet extends HttpServlet {
 		return parseInt;
 		// return ((Number) result.getObject(1)).intValue();
 
+	}
+	
+	/**
+	 * check and return the max level of the tree
+	 * @param projectId
+	 * @return
+	 */
+	int maxLevel(String projectId){
+		int level=0;
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+		
+		Connection con = DriverManager
+				.getConnection("jdbc:mysql://localhost:3306/test");
+		// Connection con =
+		// DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"
+		// +"user=orbits&password=orbits");
+		java.sql.PreparedStatement stat = con
+				.prepareStatement("select MAX(Levelno) from Node where ProjectId='"+ projectId + "'");
+		ResultSet result = stat.executeQuery();
+		result.first();
+		level=result.getInt(1);
+		return level;
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return level;
 	}
 
 	HashMap<String, List<String>> displayResults(int personId,String projectId)
@@ -229,7 +260,7 @@ public class DisplayNodesServlet extends HttpServlet {
 	}
 
 	void setAttributes(int personID, HashMap<String, List<String>> result,
-			HttpServletRequest request, HttpServletResponse response,String projectId,String selectedNodeId)
+			HttpServletRequest request, HttpServletResponse response,String projectId,String selectedNodeId, int maxLevel)
 			throws ServletException, IOException, ClassNotFoundException,
 			SQLException {
 		// find number of parents
@@ -245,6 +276,13 @@ public class DisplayNodesServlet extends HttpServlet {
 		HashMap<String, List> hashMap6 = new HashMap<String, List>();
 		HashMap<String, List> hashMap7 = new HashMap<String, List>();
 		HashMap<String, List> hashMap8 = new HashMap<String, List>();
+		HashMap<String, List> hashMap9 = new HashMap<String, List>();
+		HashMap<String, List> hashMap10 = new HashMap<String, List>();
+		HashMap<String, List> hashMap11 = new HashMap<String, List>();
+		HashMap<String, List> hashMap12 = new HashMap<String, List>();
+		HashMap<String, List> hashMap13 = new HashMap<String, List>();
+		HashMap<String, List> hashMap14 = new HashMap<String, List>();
+		HashMap<String, List> hashMap15 = new HashMap<String, List>();
 
 		Iterator it = result.entrySet().iterator();
 		while (it.hasNext()) {
@@ -309,6 +347,48 @@ public class DisplayNodesServlet extends HttpServlet {
 				break;
 
 			}
+			case 9: {
+
+				hashMap9.put(entry.getKey().toString(), val);
+				break;
+
+			}
+			case 10: {
+
+				hashMap10.put(entry.getKey().toString(), val);
+				break;
+
+			}
+			case 11: {
+
+				hashMap11.put(entry.getKey().toString(), val);
+				break;
+
+			}
+			case 12: {
+
+				hashMap12.put(entry.getKey().toString(), val);
+				break;
+
+			}
+			case 13: {
+
+				hashMap13.put(entry.getKey().toString(), val);
+				break;
+
+			}
+			case 14: {
+
+				hashMap14.put(entry.getKey().toString(), val);
+				break;
+
+			}
+			case 15: {
+
+				hashMap15.put(entry.getKey().toString(), val);
+				break;
+
+			}
 			}
 
 		}
@@ -329,6 +409,13 @@ public class DisplayNodesServlet extends HttpServlet {
 		request.setAttribute("node7", hashMap7);
 		// if(!flag8)
 		request.setAttribute("node8", hashMap8);
+		request.setAttribute("node9", hashMap8);
+		request.setAttribute("node10", hashMap8);
+		request.setAttribute("node11", hashMap8);
+		request.setAttribute("node12", hashMap8);
+		request.setAttribute("node13", hashMap8);
+		request.setAttribute("node14", hashMap8);
+		request.setAttribute("node15", hashMap8);
 
 		// setting the comments
 		request.setAttribute("comments", retrieveComments());
@@ -393,7 +480,6 @@ public class DisplayNodesServlet extends HttpServlet {
 				commentMap.add(nodeId, commentDet);
 			}
 		}
-		System.out.println("comment map=" + commentMap.toString());
 		return commentMap;
 	}
 

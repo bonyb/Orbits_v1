@@ -83,10 +83,13 @@ public class CreateNewTree extends HttpServlet {
 			
 			
 		// request.
-		String path="/DisplayNodesServlet?projectId="+projectID+"&selectedNodeId="+nodeId;
-		RequestDispatcher dispatcher = request
-				.getRequestDispatcher(path);
-		dispatcher.forward(request, response);
+		//String path="/DisplayNodesServlet?projectId="+projectID+"&selectedNodeId="+nodeId;
+		//RequestDispatcher dispatcher = request
+			//	.getRequestDispatcher(path);
+		//dispatcher.forward(request, response);
+		String aDestinationPage="DisplayNodesServlet?projectId="+projectID+"&selectedNodeId="+nodeId;
+		String urlWithSessionID = response.encodeRedirectURL(aDestinationPage.toString());
+	    response.sendRedirect( urlWithSessionID );
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

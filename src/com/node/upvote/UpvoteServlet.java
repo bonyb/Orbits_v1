@@ -34,7 +34,11 @@ public class UpvoteServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		String nodeID = request.getParameter("nodeID").toString();
+		String projectId=request.getParameter("projectId");
+		String aDestinationPage="DisplayNodesServlet?projectId="+projectId+"&selectedNodeId="+nodeID;
+		String urlWithSessionID = response.encodeRedirectURL(aDestinationPage.toString());
+	    response.sendRedirect( urlWithSessionID );
 	}
 
 	/**
@@ -66,9 +70,12 @@ public class UpvoteServlet extends HttpServlet {
 					.prepareStatement("UPDATE Node SET UpVote=" + upvote
 							+ " Where NodeID='" + nodeID + "'");
 			stat1.executeUpdate();
-			RequestDispatcher dispatcher = request
-					.getRequestDispatcher("/DisplayNodesServlet?projectId="+projectId+"&selectedNodeId="+nodeID);
-			dispatcher.forward(request, response);
+			String aDestinationPage="DisplayNodesServlet?projectId="+projectId+"&selectedNodeId="+nodeID;
+			String urlWithSessionID = response.encodeRedirectURL(aDestinationPage.toString());
+		    response.sendRedirect( urlWithSessionID );
+			//RequestDispatcher dispatcher = request
+			//		.getRequestDispatcher("/DisplayNodesServlet?projectId="+projectId+"&selectedNodeId="+nodeID);
+			//dispatcher.forward(request, response);
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

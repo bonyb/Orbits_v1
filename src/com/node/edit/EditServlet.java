@@ -37,7 +37,11 @@ public class EditServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		String nodeID = request.getParameter("nodeID").toString();
+		String projectId=request.getParameter("projectId");
+		String aDestinationPage="DisplayNodesServlet?projectId="+projectId+"&selectedNodeId="+nodeID;
+		String urlWithSessionID = response.encodeRedirectURL(aDestinationPage.toString());
+	    response.sendRedirect( urlWithSessionID );
 	}
 
 	/**
@@ -67,9 +71,15 @@ public class EditServlet extends HttpServlet {
 							+ escapetexts[1] + "' Where NodeID='" + nodeId
 							+ "'");
 			stat1.executeUpdate();
-			RequestDispatcher dispatcher = request
-					.getRequestDispatcher("/DisplayNodesServlet?projectId="+projectId+"&selectedNodeId="+nodeId);
-			dispatcher.forward(request, response);
+			java.sql.PreparedStatement stat2 = con
+			.prepareStatement("UPDATE Tree SET Title='"
+					+ escapetexts[0] + "' , Description='"
+					+ escapetexts[1] + "' Where ProjectID='" + projectId
+					+ "'");
+			stat2.executeUpdate();
+			String aDestinationPage="DisplayNodesServlet?projectId="+projectId+"&selectedNodeId="+nodeId;
+			String urlWithSessionID = response.encodeRedirectURL(aDestinationPage.toString());
+		    response.sendRedirect( urlWithSessionID );
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
