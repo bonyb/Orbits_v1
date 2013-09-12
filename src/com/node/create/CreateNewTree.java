@@ -73,7 +73,7 @@ public class CreateNewTree extends HttpServlet {
 			// insert into Node table
 			java.sql.PreparedStatement stat3 = con.prepareStatement("INSERT INTO Node(Title,AuthorId,CreationTimeDate,ProjectId,Parent,Levelno,countChildren,UpVote,DownVote) VALUES ('"+ escapeTexts[0]+ "','"+ userId+ "','"+ dt+ "',"+projectID+",0,1,0,0,0)");
 			stat3.executeUpdate();
-			enterContributors(request,response,projectID);
+			enterContributors(request,response,projectID,userId);
 			
 			//get the nodeId that just got created
 			java.sql.PreparedStatement stat4 = con.prepareStatement("Select NodeID from Node where ProjectId="+ projectID);
@@ -106,20 +106,19 @@ public class CreateNewTree extends HttpServlet {
 	 * Insert the contributors
 	 * @param request
 	 */
-	private void enterContributors(HttpServletRequest request,HttpServletResponse response,String projectID) {
+	private void enterContributors(HttpServletRequest request,HttpServletResponse response,String projectID,String userId) {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+			
+			Connection con = DriverManager
+					.getConnection("jdbc:mysql://localhost:3306/test");
+			// Connection con =
+			// DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"
+			// +"user=orbits&password=orbits");
 		for(int i=1;i<=8;i++){
 			String paramName= "person"+i;
 			String name= request.getParameter(paramName);
 			if(name.length() > 0 || !name.isEmpty()){
-				try {
-					Class.forName("com.mysql.jdbc.Driver");
-				
-				Connection con = DriverManager
-						.getConnection("jdbc:mysql://localhost:3306/test");
-				// Connection con =
-				// DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"
-				// +"user=orbits&password=orbits");
-				
 				//check if the name exists in the DB and get the personID
 				java.sql.PreparedStatement stat2 = con.prepareStatement("Select PersonID from Person where Username='"+name.toLowerCase()+ "'");
 				ResultSet result= stat2.executeQuery();
@@ -132,23 +131,27 @@ public class CreateNewTree extends HttpServlet {
 					RequestDispatcher dispatcher = request.getRequestDispatcher("landingPage.jsp");
 					dispatcher.forward(request, response);
 				}
-				} catch (ClassNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (ServletException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 			}
 		}
+		java.sql.PreparedStatement stat2 = con.prepareStatement("INSERT INTO PersonTreeCon VALUES ("+ projectID+","+ userId+ ")");
+		stat2.executeUpdate();
 		
+		
+		}catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ServletException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		
 		
 	}
