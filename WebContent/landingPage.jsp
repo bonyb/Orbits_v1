@@ -67,6 +67,7 @@ if (null != hashmap && !hashmap.isEmpty()) {
 		%>
 		
 		<div class="new_project" id="project_<%=key%>">
+		<div class="noof_contributors"><%=value.get(2)%></div>
 			<div class="project_title"><%=value.get(0)%></div>
 			<div class="project_date"><%=value.get(1)%></div>
 			
@@ -94,6 +95,7 @@ if (null != hashmapContri && !hashmapContri.isEmpty()) {
 		//showing the comment/author/date
 %>
 		<div class="new_project" id="project_<%=key%>">
+		<div class="noof_contributors"><%=value.get(3)%></div>
 			<div class="project_title"><%=value.get(0)%></div>
 			<div class="project_date"><%=value.get(1)%></div>
 			<div class="author_name"><%=value.get(2)%></div>

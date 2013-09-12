@@ -143,6 +143,7 @@ public class AuthAndDisplayProjects extends HttpServlet {
 				List<String> messages = new ArrayList<String>();
 				messages.add(projectdets.getString("Title"));
 				messages.add(projectdets.getString("CreationTimeDate"));
+				messages.add(numberofContributors(projectdets.getString("ProjectID")));
 				projects.put(projectdets.getString("ProjectID"), messages);
 								}	
 			}
@@ -165,6 +166,33 @@ public class AuthAndDisplayProjects extends HttpServlet {
 		
 	}
 
+	private String numberofContributors(String projectId){
+		String number="0";
+		try {
+		Class.forName("com.mysql.jdbc.Driver");
+		Connection con;
+	
+			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
+		
+	// Connection con =
+	// DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"
+	// +"user=orbits&password=orbits");	
+		//set user name in session
+		java.sql.PreparedStatement stat = con.prepareStatement("select COUNT(DISTINCT PersonID) from PersonTreeCon where ProjectID='"
+				+ projectId + "'");
+		ResultSet result = stat.executeQuery();
+		result.first();
+		number=result.getString(1);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return number;
+	}
+	
 	/**
 	 * Get the projects that the user contributed in
 	 * @param userId
@@ -198,6 +226,7 @@ public class AuthAndDisplayProjects extends HttpServlet {
 						ResultSet authorRes = stat1.executeQuery();
 						authorRes.first();
 						messages.add(authorRes.getString(1));
+						messages.add(numberofContributors(projectdets.getString("ProjectID")));
 						projects.put(projectdets.getString("ProjectID"), messages);
 										
 					}
