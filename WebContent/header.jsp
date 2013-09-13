@@ -29,32 +29,16 @@ body {
 				<a class="brand" href="AuthAndDisplayProjects"> Orbits </a>
 				<div class="nav-collapse collapse">
 					<ul class="nav">
-						<li class="active"><a href="#"> New Project </a>
-						</li>
-						<li><a href="#about"> About </a>
-						</li>
-						<li class="dropdown"><a class="dropdown-toggle"
-							data-toggle="dropdown" href="#"> Dropdown <b class="caret"></b>
-						</a>
-							<ul class="dropdown-menu">
-								<li><a href="#"> Action </a>
-								</li>
-								<li><a href="#"> Another action </a>
-								</li>
-								<li><a href="#"> Something else here </a>
-								</li>
-								<li class="divider"></li>
-								<li class="nav-header">Nav header</li>
-								<li><a href="#"> Separated link </a>
-								</li>
-								<li><a href="#"> One more separated link </a>
-								</li>
-							</ul>
-						</li>
-					</ul>
+					<%if(session.getAttribute("username")!=null){
+						String username= session.getAttribute("username").toString();
+						%>
+						<span class="brand">Welcome <%=username%></span><%} %>
+					<li style="padding-left:50px;margin-top:2px;margin-bottom:-15px;">
 					<form action="SessionInvalidate" method="POST">
 							<input class="btn" type="submit" value="Logout">
 					</form>
+					</li>
+					</ul>
 				</div>
 				<!--/.nav-collapse -->
 			</div>

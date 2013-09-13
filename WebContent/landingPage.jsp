@@ -30,7 +30,6 @@
 <body onload="getProjectCookie()" onunload="setProjectCookie()">
 <%@include file="header.jsp" %>
 <%String username= session.getAttribute("username").toString(); %>
-Hello <%=username%>
 
 <%	
 if(null!=request.getAttribute("nonExistantPerson")){%>
@@ -51,18 +50,17 @@ if(null!=request.getAttribute("nonExistantPerson")){%>
 			<div class="add_users_form">				
 				<div class="add_members" style="white-space: nowrap;">Add Team Members</div>
 					<div class="new_project_users">
-					<input type="text" name="person1" class="new_user_input"/>
-					<input type="text" name="person2" class="new_user_input"/>
-					<input type="text" name="person3" class="new_user_input"/>
-					<input type="text" name="person4" class="new_user_input"/>
-					<input type="text" name="person5" class="new_user_input"/>
-					<input type="text" name="person6" class="new_user_input"/>
-					<input type="text" name="person7" class="new_user_input"/>
-					<input type="text" name="person8" class="new_user_input"/>
-				</div>
-				
+					<input type="text" name="person1" class="new_user_input" placeholder="Username"/>
+					<input type="text" name="person2" class="new_user_input" placeholder="Username"/>
+					<input type="text" name="person3" class="new_user_input" placeholder="Username"/>
+					<input type="text" name="person4" class="new_user_input" placeholder="Username"/>
+					<input type="text" name="person5" class="new_user_input" placeholder="Username"/>
+					<input type="text" name="person6" class="new_user_input" placeholder="Username"/>
+					<input type="text" name="person7" class="new_user_input" placeholder="Username"/>
+					<input type="text" name="person8" class="new_user_input" placeholder="Username"/>
+					
 					<input type="submit" alt="Submit" class="newProjectSubmit" value="Submit">
-				
+				</div>
 			</div>
 		</form>
 	</div>
