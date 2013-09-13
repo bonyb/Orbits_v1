@@ -22,7 +22,7 @@
 <!doctype html>
 <html>
 <head>
-<title>jsPlumb 1.3.16 - State Machine Demonstration - jQuery</title>
+<title>Orbits - Project Page</title>
 <link rel="stylesheet" href="styles/jsPlumbDemo.css">
 <link rel="stylesheet" href="styles/stateMachineDemo.css">
 <link rel="stylesheet" href="styles/style.css">
@@ -96,13 +96,6 @@
 								pageContext.setAttribute("nodelistSize",
 										value.size());
 								
-								Random randomGenerator = new Random();
-								float value1 = (8 + 64 + 119)/3;
-								float newValue = value1 + 2 * i;
-								float valueRatio = newValue / value1;
-								//Color newColor = new Color(8 * valueRatio,64 * valueRatio,119 * valueRatio);
-								Color newColor = new Color(i*20,i*25,i*30);
-								
 								//color test
 								Color parentColor=Color.darkGray;
 								colorMap.put(key,parentColor);
@@ -132,7 +125,7 @@
 			radius=2+ inc;
 			// to check if same author
 					if(userID.equalsIgnoreCase(value.get(6).toString())){ %>
-			<div class="w circle" id="<%=key%>"
+			<div class="w circle" id="<%=key%>" onclick="cancelEdit(<%=key%>)"
 				style="left:<%=((i*x_padding))+x_position%>em; top:<%=(node_height*y_padding)+y_position%>em;width: <%=radius%>em;height: <%=radius%>em;  background-color: rgb(<%=parentColor.getRed()%>, <%=parentColor.getGreen()%>, <%=parentColor.getBlue()%>);">
 				
 				<div class="node_map_title"><%=value.get(0)%></div>
@@ -146,7 +139,7 @@
 			<%	} else{
 				%>
 			
-			<div class="w" id="<%=key%>"
+			<div class="w" id="<%=key%>" onclick="cancelEdit(<%=key%>)"
 				style="left:<%=((i*x_padding))+x_position%>em; top:<%=(node_height*y_padding)+y_position%>em;width: <%=radius%>em;height: <%=radius%>em; background-color: rgb(<%=parentColor.getRed()%>, <%=parentColor.getGreen()%>, <%=parentColor.getBlue()%>);">
 				<div class="node_map_title"><%=value.get(0) %></div>
 				<div class="ep"></div>
@@ -172,11 +165,10 @@
 					</c:if>
 				</div>
 				<div class="vote_count_pu">
-					<img src="images/icons/like.png" /><%=key%>
+					<img src="images/icons/like-test1.png" /><%=key%>
 					<div class="rating"></div>
 				</div>
 			</div>
-
 
 			<%
 				node_height++;
@@ -189,7 +181,7 @@
 			%>
 
 		</div>
-	</div>
+
 
 		<div id="content_field">
 
@@ -234,17 +226,20 @@
 								pageContext.setAttribute("nodeno", key);
 			%>
 
-			<div>
+<!-- 			<div> -->
 				<c:set var="nodename" value="nodeno_${nodeno}"></c:set>
 				<c:set var="imgnodename" value="imgno_${nodeno}"></c:set>
-				<div class="node" id="container_<%=i%>">
+<%-- 				<div class="node" id="container_<%=i%>"> --%>
 				<div class="node_titlebar" id="title_bar_<%=key %>">
+				
+				<img style="cursor:pointer;" class="text_icon" id="text_icon_<%=key%>" src="images/icons/edit-test1.png" onclick="editNode(<%=key%>);"/>  
+				
 				<!-- Display title -->
 					<div class="node_title display_title" id="title_<%=key %>"><%=value.get(0)%></div>
 				<!-- To edit title -->	
-					<input class="editTitle" type="text" name="title" style="display:none;" value="<%=value.get(0)%>" form="editForm_<%=key%>" >
+					<input class="editTitle" type="text" name="title" style="display:none;" value="<%=value.get(0)%>" form="editForm_<%=key%>" maxlength="25">
 					
-					<img class="mark_icon" id="mark_icon_<%=key%>" src="images/icons/mark_icon.png" />
+<%-- 					<img class="mark_icon" id="mark_icon_<%=key%>" src="images/icons/mark_icon.png" /> --%>
 						
 						<!-- Comment submit section -->
 						<img style="cursor:pointer;" class="comment_icon" id="comment_icon_<%=key%>" src="images/icons/comment_icon.png" onclick="submitComment(<%=key%>);"/>
@@ -254,7 +249,7 @@
 						<form action="UpvoteServlet" method="post">
 							<input type="hidden" value='${nodeno}' name="nodeID" /> 
 							<input type="hidden" value="<%=projectId %>" name="projectId" />
-							<input type="image" src="images/icons/agree_icon.png" alt="Submit" id="up_btn_<%=key%>" align="right"width="48" height="20">
+							<input type="image" src="images/icons/like-test1.png" alt="Submit" id="up_btn_<%=key%>" align="right"width="48" height="20">
 							<%=value.get(7) %></form> 
 						</div>			
 												
@@ -262,7 +257,7 @@
 						<form  action="DownvoteServlet" method="post">
 							<input type="hidden" value='${nodeno}' name="nodeID" /> 
 							<input type="hidden" value="<%=projectId %>" name="projectId" />
-							<input type="image" src="images/icons/disagree_icon.png" alt="Submit" id="down_btn_<%=key%>" align="right"width="48" height="20">
+							<input type="image" src="images/icons/dislike-test1.png" alt="Submit" id="down_btn_<%=key%>" align="right"width="48" height="20">
 							<%=value.get(8) %></form>
 						</div>
 						
@@ -277,8 +272,7 @@
 					<div class="text_edit_bar"></div>
 						<!-- Display Description -->
 						<% if(value.get(1) != null){%>
-					<div class="node_description" id="node_description_<%=key%>">
-					<%=value.get(1)%></div> <%} %>
+					<div class="node_description" id="node_description_<%=key%>"><%=value.get(1)%></div> <%} %>
 
 						<!-- Edit Description -->
 						<textarea class="editDesc" rows="4" cols="50" maxlength="250" name="description" style="display:none;" form="editForm_<%=key%>"><%if(value.get(1)!=null){%><%=value.get(1)%><%} %></textarea>
@@ -303,31 +297,30 @@
 					
 					</div>
 					
-
-					 <img style="cursor:pointer;" class="text_icon" id="text_icon_<%=key%>" src="images/icons/text_icon.png" onclick="editNode(<%=key%>);"/>  
-						
 						<!-- To edit! -->
 						<div class="editNode" id="editNodeDiv_<%=key%>" style="display:none">
-						<form action="EditServlet" method="post" id="editForm_<%=key%>">
-							<input type="hidden" value='${nodeno}' name="nodeID" /> 
-							<input type="hidden" value="<%=projectId %>" name="projectId" />
-							<input type="image" src="images/icons/node-checkbutton-v1.png" alt="Submit" align="left" width="48" height="39">
-						</form> 
-						<a href="#" id="cancelEdit_<%=key%>" onclick="cancelEdit(<%=key%>)"><img src="images/icons/node-deletebutton-v1.png" alt="Cancel Edit" /></a>
+							<form action="EditServlet" method="post" id="editForm_<%=key%>">
+								<input type="hidden" value='${nodeno}' name="nodeID" /> 
+								<input type="hidden" value="<%=projectId %>" name="projectId" />
+								<input type="image" src="images/icons/submit-test1.png" alt="Submit" align="left" width="48" height="39">
+							</form> 
+							<a href="#" class="edit_node_cancel" id="cancelEdit_<%=key%>" onclick="cancelEdit(<%=key%>)"><img src="images/icons/cancel-test1.png" alt="Cancel Edit" /></a>
+							
+							
 						</div>
 						
 					</div>
-				</div>
-			</div>
+<!-- 				</div> -->
+<!-- 			</div> -->
 
-						<div class="add_icon" style="cursor:pointer;">
-							<img class="new_btn" id="new_btn_<%=key%>" src="images/plus_btn.png" />
-						</div>
+			<div class="add_icon" style="cursor:pointer;">
+				<img class="new_btn" id="new_btn_<%=key%>" src="images/icons/add-buttn-test1.png" />
+			</div>
 
 			<div class="new_node_form" id="new_node_form_<%=key%>">
 			<div class="add_node_title">
 					<form action="MyServlet" method="POST">
-						<input class="input_title" type="text" name="title" placeholder="Title"></div>
+						<input class="input_title" type="text" name="title" placeholder="Title"  maxlength="25"></div>
 						<div class="author_name"><%=username%></div>
 						<div class="creation_date"><%=value.get(9) %></div>
 						<div class="text_edit_bar"></div>
@@ -344,11 +337,11 @@
 	    					<input class="node_tag_input node_tag1" type="text" name="tag1">
 	    					<input class="node_tag_input node_tag2" type="text" name="tag2">
 	    					<input class="node_tag_input node_tag3" type="text" name="tag3">
-	    				<a href="#" class="new_tag"><img class="new_tag_img" id="new_tag_<%=key%>" src="images/icons/plusTag_icon.png" /></a></div>
+	    				<a href="#" class="new_tag"><img class="new_tag_img" id="new_tag_<%=key%>" src="images/icons/add-buttn-test1.png" /></a></div>
 						
 							
-							<input class="new_node_submit_btn" type="image" src="images/icons/node-checkbutton-v1.png" alt="Submit" width="48" height="39">
-							<a href="#" class="new_node_cancel_btn" id="cancel_<%=key%>" onclick="cancelAdd(<%=key%>)"><img src="images/icons/node-deletebutton-v1.png" alt="Cancel Add" /></a>
+							<input class="new_node_submit_btn" type="image" src="images/icons/submit-test1.png" alt="Submit" width="48" height="39">
+							<a href="#" class="new_node_cancel_btn" id="cancel_<%=key%>" onclick="cancelAdd(<%=key%>)"><img src="images/icons/cancel-test1.png" alt="Cancel Add" /></a>
 						</div>
 					<!-- <div>cancel button onclick='$(this).parent().parent().hide();'</div> -->
 				</form>
@@ -391,22 +384,16 @@
 					</div>		
 					
 					<!-- To comment- the form! -->
-						<div class="commentSection" id="commentDiv_<%=key%>" style="display:none">
+					<div class="commentSection" id="commentDiv_<%=key%>" style="display:none">
 						<form action="CommentServlet" method="post" id="commentForm_<%=key%>" class="comment_form">
 						<textarea id="comment_<%=key%>" class="commentSection" rows="4" cols="50" maxlength="250" name="comment" form="commentForm_<%=key%>"></textarea>
 							<input type="hidden" value='${nodeno}' name="nodeID" /> 
 							<input type="hidden" value="<%=projectId %>" name="projectId" />
-							<input type="image" class="comment_submit_btn" src="images/icons/node-checkbutton-v1.png" alt="Submit" width="48" height="39"/>
-							<a href="#" class="comment_cancel_btn" id="cancelEdit_<%=key%>" onclick="cancelComment(<%=key%>)"><img src="images/icons/node-deletebutton-v1.png" alt="Cancel Comment" /></a>
+							<input type="image" class="comment_submit_btn" src="images/icons/submit-test1.png" alt="Submit" width="48" height="39"/>
+							<a href="#" class="comment_cancel_btn" id="cancelEdit_<%=key%>" onclick="cancelComment(<%=key%>)"><img src="images/icons/cancel-test1.png" alt="Cancel Comment" /></a>
 						</form> 
 						</div>
-					
-					
 					</div>
-		
-
-			
-		
 		</div>
 
 		<%
@@ -421,11 +408,19 @@
 
 
 	</div>
-	
+</div>	
 <!-- 	<img class="placeholder_thread" src="images/placeholderdiscussion.png" /> -->
 
 </div>
 
+	<script>
+  	$(function() {
+    	$( "#content_field" ).draggable();
+    	$( "#content_field" ).resizable();
+    	
+    	$( ".discussion_thread" ).resizable();
+  	});
+  	</script>
 
 	<!-- JS -->
 	<!-- support lib for bezier stuff -->
