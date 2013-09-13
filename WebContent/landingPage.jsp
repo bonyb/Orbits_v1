@@ -39,12 +39,12 @@ if(null!=request.getAttribute("nonExistantPerson")){%>
 %>
 <img src="images/ui-orbits-background-v1.png" style="width:90%;height:auto;position:fixed;z-index:-2;"/>
 
-<div class="new_project_node octagon">
+<div class="new_project_node octagonRed">
 <img src="images/shadow-node.png" style="width:100%;height:243%;position:absolute;top:-71%;left:0%;"/>
 	<div class="new_project_form">
 		<form action="CreateNewTree" method="POST">
 			<div class="new_project_title">
-				<input class="input-block-level input_title" type="text" name="title" placeholder="Title" maxlength="25">
+				<input class="input-block-level add_project_title" type="text" name="title" placeholder="Title" maxlength="25">
 			</div>
 			
 			<div class="add_users_form">				
@@ -58,9 +58,10 @@ if(null!=request.getAttribute("nonExistantPerson")){%>
 					<input type="text" name="person6" class="new_user_input" placeholder="Username"/>
 					<input type="text" name="person7" class="new_user_input" placeholder="Username"/>
 					<input type="text" name="person8" class="new_user_input" placeholder="Username"/>
-					
-					<input type="submit" alt="Submit" class="newProjectSubmit" value="Submit">
 				</div>
+				<input type="submit" alt="Submit" class="newProjectSubmit" value="Submit">
+				
+				
 			</div>
 		</form>
 	</div>
@@ -88,10 +89,11 @@ if (null != hashmap && !hashmap.isEmpty()) {
 		String key = (String) entry.getKey();
 		List<String> value = (List<String>) entry.getValue();
 		//showing the comment/author/date
-		%>
-		
+		boolean flag=true;
+		if(flag){
+		flag=false;%>
 		<div class="new_project" id="project_<%=key%>" 
-		style="left:<%=((i*x_padding))+x_position%>em;top:27%;position:absolute;">
+		style="left:60px;top:165px;position:relative;">
 		
 			<div class="project_title_box">
 				<div class="project_title"><%=value.get(0)%></div>
@@ -100,19 +102,30 @@ if (null != hashmap && !hashmap.isEmpty()) {
 					<div class="project_author"><%=username%></div>
 				</div>
 			</div>
-			
-			
-			
-			<a class="project_link octagon" href="DisplayNodesServlet?projectId=<%=key%>">
+			<a class="project_link octagonBlack" href="DisplayNodesServlet?projectId=<%=key%>">
 				<img src="images/shadow-node.png" style="width:100%;height:243%;position:absolute;top:-71%;left:0%;"/>
 				<div class="contributors_num"><%=value.get(2)%></div>
-			</a>	
+			</a>
+			</div>
 			
-			
-		</div>
+		<%}else{
+		%>
+		<div class="new_project" id="project_<%=key%>" 
+		style="left:<%=((i*x_padding))+x_position%>em;top:57%;position:absolute;">
 		
-		<%	
-		
+			<div class="project_title_box">
+				<div class="project_title"><%=value.get(0)%></div>
+				<div class="date_author_bar">
+					<div class="project_date"><%=value.get(1)%></div>
+					<div class="project_author"><%=username%></div>
+				</div>
+			</div>
+			<a class="project_link octagonBlack" href="DisplayNodesServlet?projectId=<%=key%>">
+				<img src="images/shadow-node.png" style="width:100%;height:243%;position:absolute;top:-71%;left:0%;"/>
+				<div class="contributors_num"><%=value.get(2)%></div>
+			</a>
+			</div>
+			<%}
 		i++;
 	}					
 }
@@ -121,7 +134,7 @@ if (null != hashmap && !hashmap.isEmpty()) {
 <%
 HashMap<String,List<String>> hashmapContri = (HashMap<String, List<String>>) request.getAttribute("contributions");
 
-position =0;
+position =1;
 i = 1;
 x_position = 5;
 y_position = 0;

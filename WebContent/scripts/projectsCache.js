@@ -31,11 +31,15 @@ function setProjectCookie()
 			var offset =$(nodeArrayCache[i]).offset();
 			var otop=offset.top;
 			var oleft=offset.left+windowx;		
-			
 			projectPositionArray[i]="left:" + oleft + "top:" + otop;
 		    }
+		if(projectPositionArray.length == 0){
+			var c_name="projectPos";
+			var pos="left:50" + "top:150";
+			document.cookie=c_name + "=" + pos;
+		}else{
 		var c_name="projectPos";
-		document.cookie=c_name + "=" + projectPositionArray;
+		document.cookie=c_name + "=" + projectPositionArray;}
 	}	
 	
 function getProjectCookie()
