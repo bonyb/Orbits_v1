@@ -3,6 +3,7 @@ package com.node.edit;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -71,12 +72,18 @@ public class EditServlet extends HttpServlet {
 							+ escapetexts[1] + "' Where NodeID='" + nodeId
 							+ "'");
 			stat1.executeUpdate();
+			stat1.close();
+			PreparedStatement stat = con
+					.prepareStatement("select Parent from Node where NodeID='"+nodeId+"'");
+			ResultSet parent = stat.executeQuery();
+			parent.first();
+			if(parent.getInt("Parent")==0){
 			java.sql.PreparedStatement stat2 = con
 			.prepareStatement("UPDATE Tree SET Title='"
 					+ escapetexts[0] + "' , Description='"
 					+ escapetexts[1] + "' Where ProjectID='" + projectId
 					+ "'");
-			stat2.executeUpdate();
+			stat2.executeUpdate();}
 			String aDestinationPage="DisplayNodesServlet?projectId="+projectId+"&selectedNodeId="+nodeId;
 			String urlWithSessionID = response.encodeRedirectURL(aDestinationPage.toString());
 		    response.sendRedirect( urlWithSessionID );
