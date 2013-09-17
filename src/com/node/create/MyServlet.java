@@ -81,9 +81,9 @@ public class MyServlet extends HttpServlet {
 
 			inserttagvalues(tags, nodeId);
 			// request.
-			RequestDispatcher dispatcher = request
-					.getRequestDispatcher("/DisplayNodesServlet?projectId="+projectId+"&selectedNodeId="+nodeId);
-			dispatcher.forward(request, response);
+			String aDestinationPage="DisplayNodesServlet?projectId="+projectId+"&selectedNodeId="+nodeId;
+			String urlWithSessionID = response.encodeRedirectURL(aDestinationPage.toString());
+		    response.sendRedirect( urlWithSessionID );
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

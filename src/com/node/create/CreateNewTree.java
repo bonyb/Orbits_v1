@@ -51,7 +51,15 @@ public class CreateNewTree extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		HttpSession session = request.getSession();
+		HttpSession session = request.getSession(true);
+		if(null == session.getAttribute("userID")){
+			// Timed out session
+			request.setAttribute("timedOut", "true");
+			RequestDispatcher dispatcher = request
+					.getRequestDispatcher("index.jsp");
+			dispatcher.forward(request, response);
+			
+		}else{
 		String userId = session.getAttribute("userID").toString();
 		String title = request.getParameter("title");
 		String[] escapeTexts= utility.setEcsapeTitleDesc(title, null);
@@ -99,6 +107,7 @@ public class CreateNewTree extends HttpServlet {
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
 		}
 	}
 

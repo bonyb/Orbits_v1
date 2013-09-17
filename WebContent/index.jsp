@@ -1,13 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<html style="background-color:#333333;">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script src="scripts/script.js"></script>
 <link href="styles/style.css" rel="stylesheet" type="text/css" />
-<title>Insert title here</title>
+<title>Orbits - Sign In</title>
 
 <!-- BLAH -->
 
@@ -17,7 +17,7 @@
       body {
         padding-top: 40px;
         padding-bottom: 40px;
-        background-color: #f5f5f5;
+        //background-color: black;
       }
 
       .form-signin {
@@ -51,10 +51,10 @@
 
 
 </head>
-<body>
+<body style="background-color:#333333;">
 	<%@include file="header.jsp"%>
 
-	<div class="container">
+	<div class="container" style="background-color:#555555;">
 
 		<%
 			if (request.getAttribute("results") != null
@@ -62,7 +62,11 @@
 		%><div class="errorWrapper">Please login again. Authentication
 			Error</div>
 		<%
-			}
+			}else if(request.getAttribute("timedOut") != null
+					&& request.getAttribute("timedOut").toString() == "true"){%>
+					<div class="errorWrapper">Session Timed out. Please login again</div>
+				
+		<%}
 		%>
 
 		<form class="form-signin" action="AuthAndDisplayProjects" method="POST">

@@ -60,16 +60,16 @@ public class AuthAndDisplayProjects extends HttpServlet {
 				String password = request.getParameter("password");
 				personID = authLogin(username, password);
 				if (personID == 0) {
+					// Wrong user name and password
 					request.setAttribute("results", "none");
 					RequestDispatcher dispatcher = request
 							.getRequestDispatcher("index.jsp");
 					dispatcher.forward(request, response);
 
 				} else {
-					HttpSession newsession = request.getSession(false);
-					newsession.setAttribute("userID", personID);
-					// set the attributes in request and session
-					setAttributes(newsession,personID,request, response);
+					//correct authentication
+					session.setAttribute("userID", personID);
+					setAttributes(session,personID,request, response);
 				}
 			} catch (ClassNotFoundException e1) {
 				// TODO Auto-generated catch block
@@ -152,8 +152,9 @@ public class AuthAndDisplayProjects extends HttpServlet {
 			//get projects that you contributed in
 			request.setAttribute("contributions", getContributions(userId));
 			
-			RequestDispatcher dispatcher = request.getRequestDispatcher("landingPage.jsp");
-			dispatcher.forward(request, response);
+			
+		    RequestDispatcher dispatcher = request.getRequestDispatcher("landingPage.jsp");
+		    dispatcher.forward(request, response);
 			
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
