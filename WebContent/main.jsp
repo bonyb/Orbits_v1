@@ -26,19 +26,147 @@
 <link rel="stylesheet" href="styles/jsPlumbDemo.css">
 <link rel="stylesheet" href="styles/stateMachineDemo.css">
 <link rel="stylesheet" href="styles/style.css">
-	<!-- DEP -->
-<script type="text/javascript" src="js/lib/jquery-1.8.1-min.js"></script>
-<script type="text/javascript" src="js/lib/jquery-ui-1.8.23-min.js"></script>
-<script type="text/javascript"
-		src="js/lib/jquery.ui.touch-punch.min.js"></script>
+<style type="text/css">
+input#chat {
+            width: 410px
+        }
+
+        #console-container {
+            width: 400px;
+        }
+      
+        #console {
+            border: 1px solid #CCCCCC;
+            border-right-color: #999999;
+            border-bottom-color: #999999;
+            height: 170px;
+            overflow-y: scroll;
+            padding: 5px;
+            width: 100%;
+        }
+
+        #console p {
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+		<!-- DEP -->
+	<script type="text/javascript" src="js/lib/jquery-1.8.1-min.js"></script>
+	<script type="text/javascript" src="js/lib/jquery-ui-1.8.23-min.js"></script>
+		<script type="text/javascript">
+		$(document).ready(function(){
+		var Chat = {};
+		var dURL = document.URL;
+		var pid = dURL.indexOf("projectId=");
+		var ampIndex = dURL.indexOf("&");
+		if(ampIndex>0){
+			pid = dURL.slice(pid+10,ampIndex);
+		}
+		else{
+			pid = dURL.slice(pid+10,dURL.length);
+		}
+		//alert("pid"+pid);
+        Chat.socket = null;
+
+        Chat.connect = (function(host) {
+            if ('WebSocket' in window) {
+                Chat.socket = new WebSocket(host);
+            } else if ('MozWebSocket' in window) {
+                Chat.socket = new MozWebSocket(host);
+            } else {
+                Console.log('Error: WebSocket is not supported by this browser.');
+                return;
+            }
+
+            Chat.socket.onopen = function () {
+            	 Console.log('Info: WebSocket connection opened.');
+            	var dURL = document.URL;
+        		var nodeFrom = dURL.indexOf("&selectedNodeId=");
+        		if(ampIndex>0){
+        			var nodeIam = dURL.slice(nodeFrom+16,dURL.length);
+        			console.log("nodeIam"+nodeIam);
+        			 Chat.socket.send(nodeIam);
+//                      document.getElementById('chat').onkeydown = function(event) {
+//                          if (event.keyCode == 13) {
+//                              Chat.sendMessage();
+//                          }
+//                      };
+        		}
+               
+            };
+
+            Chat.socket.onclose = function () {
+                document.getElementById('chat').onkeydown = null;
+                Console.log('Info: WebSocket closed.');
+            };
+
+            Chat.socket.onmessage = function (message) {
+            	var displayMessage=message.data;
+            	if(displayMessage.indexOf(pid)>0){
+                Console.log(message.data);
+            	}
+            };
+        });
+       
+        Chat.initialize = function() {
+            if (window.location.protocol == 'http:') {
+               // Chat.connect('ws://' + window.location.host + '/Orbits_v1/websocket/chat');
+            	 Chat.connect('ws://' + window.location.host + '/Orbits_v1/updatedata?pid='+pid);
+            } else {
+                Chat.connect('wss://' + window.location.host + '/Orbits_v1/updatedata?pid='+pid);
+            }
+        };
+
+        Chat.sendMessage = (function() {
+            var message = document.getElementById('chat').value;
+            if (message != '') {
+                Chat.socket.send(message);
+                document.getElementById('chat').value = '';
+            }
+        });
+
+        var Console = {};
+
+        Console.log = (function(message) {
+            var console = document.getElementById('console');
+            var p = document.createElement('p');
+            p.style.wordWrap = 'break-word';
+            p.innerHTML = message;
+            console.appendChild(p);
+            while (console.childNodes.length > 25) {
+                console.removeChild(console.firstChild);
+            }
+            console.scrollTop = console.scrollHeight;
+        });
+        
+        Chat.initialize();
+		});
+		
+</script>
 	<!-- /DEP -->
+	<script type="text/javascript"
+		src="js/lib/jquery.ui.touch-punch.min.js"></script>
 	<script type="text/javascript" src="scripts/cookieManagement.js"></script>
 	<script type="text/javascript" src="scripts/editNode.js"></script>
 	<script type="text/javascript" src="scripts/new_node.js"></script>
+	<script type="text/javascript" src="scripts/jquery-mousewheel.js"></script>
+	<script type="text/javascript" src="scripts/jquery-viewport.js"></script>
+	<script type="text/javascript" src="scripts/jquery-transit-min.js"></script>
+	
 </head>
 <body data-library="jquery" onload="getCookie(<%=request.getParameter("selectedNodeId")%>)" onunload="setCookie()">
 	<%@include file="header.jsp"%>
+	<div style="width:50px;">
+    <p>
+        <input type="text" placeholder="type and press enter to chat" id="chat">
+    </p>
+    <div id="console-container">
+        <div id="console"></div>
+    </div>
+</div>
 	<% HashMap<String,Color> colorMap= new HashMap<String,Color>(); %>
+	
+
 <div class="mainContainer">
 	<div id="node_field" style="position: absolute" class="check">
 		<div id="demo">
@@ -77,10 +205,10 @@
 						hashmap = (HashMap<String, List>) request.getAttribute(att);
 						
 						if (null != hashmap && !hashmap.isEmpty()) {
-							int[] parray;
-
-							parray = new int[25];
-							int pcounter = 0;
+							
+// 							int[] parray;
+// 							parray = new int[25];
+// 							int pcounter = 0;
 							
 							Iterator entries = hashmap.entrySet().iterator();
 							while (entries.hasNext()) {
@@ -90,11 +218,11 @@
 								
 								List value = (List) entry.getValue();
 								//put it in an array
-								pcounter++;
-	     						parray[pcounter]= Integer.parseInt(value.get(2).toString());
+// 								pcounter++;
+// 	     						parray[pcounter]= Integer.parseInt(value.get(2).toString());
+	     						
 								position = Integer.parseInt(key);
-								pageContext.setAttribute("nodelistSize",
-										value.size());
+								pageContext.setAttribute("nodelistSize",value.size());
 								
 								//color test
 								Color parentColor=Color.darkGray;
@@ -125,6 +253,7 @@
 			radius=2+ inc;
 			// to check if same author
 					if(userID.equalsIgnoreCase(value.get(6).toString())){ %>
+			<div class="projectID"><%=projectId%></div>
 			<div class="w circle" id="<%=key%>" onclick="cancelEdit(<%=key%>)"
 				style="left:<%=((i*x_padding))+x_position%>em; top:<%=(node_height*y_padding)+y_position%>em;width: <%=radius%>em;height: <%=radius%>em;  background-color: rgb(<%=parentColor.getRed()%>, <%=parentColor.getGreen()%>, <%=parentColor.getBlue()%>);">
 				
@@ -134,6 +263,9 @@
 				<div class="ep"></div>
 				
 				<div class="node_color" style="display:none">#<%=parentColor.getRed()%><%=parentColor.getGreen()%><%=parentColor.getBlue()%></div>
+				
+				<a href="#" class="addnodemap_btn" id="addnodemap_<%=key%>" onclick="addNode(<%=key%>)"><img src="images/icons/addbutton-onmap-v1.png" alt="Add Node" /></a>				
+				
 				
 			</div>
 			<%	} else{
@@ -145,6 +277,9 @@
 				<div class="ep"></div>
 				
 				<div class="node_color" style="display:none;">#<%=parentColor.getRed()%><%=parentColor.getGreen()%><%=parentColor.getBlue()%></div>
+				
+				<a href="#" class="addnodemap_btn" id="addnodemap_<%=key%>" onclick="addNode(<%=key%>)"><img src="images/icons/addbutton-onmap-v1.png" alt="Add Node" /></a>				
+				
 			</div>
 			<%} %>
 			
@@ -181,8 +316,8 @@
 			%>
 
 		</div>
-
-
+		</div>
+<!-- 		<div id="scroll_controller"></div>	 -->
 		<div id="content_field">
 
 		<%
@@ -198,9 +333,9 @@
 					Map<String, List> hashmap = new HashMap<String, List>();
 					hashmap = (HashMap<String, List>) request.getAttribute(att);
 					if (null != hashmap && !hashmap.isEmpty()) {
-						int[] parray;
+// 						int[] parray;
 
-						parray = new int[25];
+// 						parray = new int[25];
 						int pcounter = 0;
 						Iterator entries = hashmap.entrySet().iterator();
 						while (entries.hasNext()) {
@@ -210,8 +345,7 @@
 							List value = (List) entry.getValue();
 							//put it in an array
 							pcounter++;
-							parray[pcounter] = Integer.parseInt(value.get(2)
-									.toString());
+// 							parray[pcounter] = Integer.parseInt(value.get(2).toString());
 							position = Integer.parseInt(key);
 							pageContext.setAttribute("nodelistSize",
 									value.size());
@@ -220,10 +354,8 @@
 		<div class="node_info" id="des_<%=key%>">
 
 			<%
-				if (parray[pcounter] != parray[pcounter - 1]) {
-									//System.out.println("a line is here");
-								}
-								pageContext.setAttribute("nodeno", key);
+// 				if (parray[pcounter] != parray[pcounter - 1]) { System.out.println("a line is here");}
+				pageContext.setAttribute("nodeno", key);
 			%>
 
 <!-- 			<div> -->
@@ -275,7 +407,7 @@
 					<div class="node_description" id="node_description_<%=key%>"><%=value.get(1)%></div> <%} %>
 
 						<!-- Edit Description -->
-						<textarea class="editDesc" rows="4" cols="50" maxlength="250" name="description" style="display:none;" form="editForm_<%=key%>"><%if(value.get(1)!=null){%><%=value.get(1)%><%} %></textarea>
+						<textarea class="editDesc" rows="4" cols="50" maxlength="1000" name="description" style="display:none;" form="editForm_<%=key%>"><%if(value.get(1)!=null){%><%=value.get(1)%><%} %></textarea>
 						<div class="node_content_under_bar">
 					
 					
@@ -319,15 +451,16 @@
 
 			<div class="new_node_form" id="new_node_form_<%=key%>">
 			<div class="add_node_title">
-					<form action="MyServlet" method="POST">
-						<input class="input_title" type="text" name="title" placeholder="Title"  maxlength="25"></div>
-						<div class="author_name"><%=username%></div>
-						<div class="creation_date"><%=value.get(9) %></div>
-						<div class="text_edit_bar"></div>
-						<textarea class="node_description_input" rows="4" cols="50" maxlength="250" name="description"></textarea> 
-						<input type="hidden" value='${nodeno}' name="parentId" />
-						<input type="hidden" value="<%=projectId %>" name="projectId" />
-						 <br>
+				<form action="MyServlet" method="POST">
+				<input class="input_title" type="text" name="title" placeholder="Title"  maxlength="25">
+			</div>
+			<div class="author_name"><%=username%></div>
+			<div class="creation_date"><%=value.get(9) %></div>
+			<div class="text_edit_bar"></div>
+			<textarea class="node_description_input" rows="4" cols="50" maxlength="1000" name="description"></textarea> 
+			<input type="hidden" value='${nodeno}' name="parentId" />
+			<input type="hidden" value="<%=projectId %>" name="projectId" />
+			 <br>
 								
 						<div class="new_node_under_bar">	
 							<div class="tagSection">
@@ -408,17 +541,44 @@
 
 
 	</div>
-</div>	
-<!-- 	<img class="placeholder_thread" src="images/placeholderdiscussion.png" /> -->
+	<!-- #content_field end-->
 
 </div>
 
 	<script>
   	$(function() {
-    	$( "#content_field" ).draggable();
+//     	$( "#content_field" ).draggable({cancel : '.node_description, .creation_date, .project_author, .form, .comment_author, .comment_date, .comment_content'});
+    	$("#node_field").draggable();
+    	var content_field = $( "#content_field" ).draggable();
     	$( "#content_field" ).resizable();
-    	
     	$( ".discussion_thread" ).resizable();
+    	    	
+//    	Scaling Tool
+//     	var currentScale = 1.0;
+//     	$("#node_field").mousewheel(function(event, delta, deltaX, deltaY) {
+    	    
+    	    
+//     	    var scale = "scale:"+currentScale+deltaY/10;
+//      	    var transformOrigin = event.pageX+"px"+" "+event.pageY+"px";
+//      	    if(deltaY>0)
+//      	    {
+//      	    	$("#node_field").css({"transformOrigin":transformOrigin}).transition({scale:'+=0.05'},0,'ease');
+//      	    }
+//      	    else{
+//      	    	$("#node_field").css({"transformOrigin":transformOrigin}).transition({scale:'-=0.05'},0,'ease');
+//      	    }
+//     	    console.log(transformOrigin);
+    	    
+//     	});
+
+    	$('.node_description', content_field).mousedown(function(ev) {content_field.draggable('disable');}).mouseup(function(ev) {content_field.draggable('enable');});
+    	$('.creation_date', content_field).mousedown(function(ev) {content_field.draggable('disable');}).mouseup(function(ev) {content_field.draggable('enable');});
+    	$('.project_author', content_field).mousedown(function(ev) {content_field.draggable('disable');}).mouseup(function(ev) {content_field.draggable('enable');});
+    	$('.form', content_field).mousedown(function(ev) {content_field.draggable('disable');}).mouseup(function(ev) {content_field.draggable('enable');});
+    	$('.comment_author', content_field).mousedown(function(ev) {content_field.draggable('disable');}).mouseup(function(ev) {content_field.draggable('enable');});
+    	$('.comment_date', content_field).mousedown(function(ev) {content_field.draggable('disable');}).mouseup(function(ev) {content_field.draggable('enable');});
+    	$('.comment_content', content_field).mousedown(function(ev) {content_field.draggable('disable');}).mouseup(function(ev) {content_field.draggable('enable');});
+
   	});
   	</script>
 

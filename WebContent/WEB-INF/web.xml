@@ -8,10 +8,32 @@
     <welcome-file>default.html</welcome-file>
     <welcome-file>default.htm</welcome-file>
     <welcome-file>default.jsp</welcome-file>
+     <welcome-file>/websocket/chat.html</welcome-file>
   </welcome-file-list>
-  <session-config>
-    <session-timeout>30</session-timeout>
-  </session-config>
+  <context-param>
+    <param-name>jws_config</param-name>
+    <param-value>${WEB_APP_HOME}WEB-INF/jWebSocket.xml</param-value>
+  </context-param>
+  <listener>
+    <description>Context listener used to start and stop the jWebSocket application server.</description>
+    <listener-class>org.jwebsocket.tomcat.ContextListener</listener-class>
+  </listener>
+    <listener>
+    <description>Session management listener</description>
+    <listener-class>org.jwebsocket.tomcat.listener.SessionListener</listener-class>
+  </listener>
+  <servlet-mapping>
+    <servlet-name>jWebSocket</servlet-name>
+    <url-pattern>/jWebSocket</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>jWebSocket</servlet-name>
+    <servlet-class>org.jwebsocket.tomcat.TomcatServlet</servlet-class>
+  </servlet>
+<!--   <servlet> -->
+<!--     <servlet-name>http</servlet-name> -->
+<!--     <servlet-class>org.jwebsocket.appserver.SampleHttpServlet</servlet-class> -->
+<!--   </servlet> -->
   <servlet>
     <display-name>MyServlet</display-name>
     <servlet-name>MyServlet</servlet-name>
@@ -57,4 +79,24 @@
     <servlet-name>AuthAndDisplayProjects</servlet-name>
     <servlet-class>com.user.project.AuthAndDisplayProjects</servlet-class>
   </servlet>
+  <servlet>
+	<servlet-name>cwServlet</servlet-name>
+	<servlet-class>websocket.chat.ChatWebSocketServlet</servlet-class>
+</servlet> 
+<!-- <servlet-mapping> -->
+<!-- <servlet-name>cwServlet</servlet-name> -->
+<!-- <url-pattern>/websocket/chat</url-pattern> -->
+<!-- </servlet-mapping> -->
+<servlet-mapping>
+<servlet-name>cwServlet</servlet-name>
+<url-pattern>/updatedata</url-pattern>
+</servlet-mapping>
+
+  <!-- Security roles referenced by this web application -->
+    <security-role>
+      <role-name>role1</role-name>
+    </security-role>
+    <security-role>
+      <role-name>tomcat</role-name>
+    </security-role>
 </web-app>
