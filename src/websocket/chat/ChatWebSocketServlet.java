@@ -99,7 +99,7 @@ public class ChatWebSocketServlet extends WebSocketServlet {
     			e.printStackTrace();
     		}
             connections.add(this);
-            String message = String.format("* %s %s",
+            String message = String.format("%s %s",
             		person, "has joined.");
             broadcast(message);
         }
@@ -127,7 +127,7 @@ public class ChatWebSocketServlet extends WebSocketServlet {
 			e.printStackTrace();
 		}
             connections.remove(this);
-            String message = String.format("* %s %s",
+            String message = String.format("%s %s",
                     nickname, "has left.");
             broadcast(message);
         }
