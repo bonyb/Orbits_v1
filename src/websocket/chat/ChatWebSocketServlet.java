@@ -39,40 +39,18 @@ public class ChatWebSocketServlet extends WebSocketServlet {
     public StreamInbound createWebSocketInbound(String subProtocol,
             HttpServletRequest request) {
      	HttpSession session=request.getSession(true);
-     	System.out.println("Par-"+request.getParameter("pid"));
+     	//System.out.println("Par-"+request.getParameter("pid"));
      	try{
      	this.projectId=Integer.parseInt(request.getParameter("pid"));
      	}catch(NumberFormatException nfe){
      		  return new ChatMessageInbound(this.username,this.projectId.toString());
      	}
     	if(session.getAttribute("userID")!=null){
-    		this.userId=Integer.parseInt(session.getAttribute("userID").toString());
+    		//this.userId=session.getAttribute("userID").toString();
     	}
-     	//check if same project
-     	try{
-     	Class.forName("com.mysql.jdbc.Driver");
-		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
-//		Connection con =DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");	
-		//check if they belong ot the project
-		java.sql.PreparedStatement stat1 = con
-		.prepareStatement("select PersonID from PersonTreeCon where PersonID='"
-				+ this.userId + "' and ProjectID='" + this.projectId + "'");
-			ResultSet exists = stat1.executeQuery();
-			while (exists.next()) {
-			this.userId = Integer.parseInt(exists.getString(1));
-			}
-		if(this.userId!=0){
-     	if(session.getAttribute("username")!=null){
+    	if(session.getAttribute("username")!=null){
     		this.username=session.getAttribute("username").toString();
     	}
-			}
-     	}catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
         return new ChatMessageInbound(this.username,this.projectId.toString());
     }
 
@@ -87,15 +65,67 @@ public class ChatWebSocketServlet extends WebSocketServlet {
         @Override
         protected void onOpen(WsOutbound outbound) {
         	// need to know what is added/updated in db
-        	
+        	//check if same project
+        	String person="";
+         	try{
+         	String nickName=this.nickname;
+         	int hashIndex=nickName.indexOf("#");
+         	String userId=nickName.substring(0, hashIndex);
+         	String projectId=nickName.substring(hashIndex+1, nickName.length());
+         	Class.forName("com.mysql.jdbc.Driver");
+    		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
+//    		Connection con =DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");	
+    		//put name in db
+    		java.sql.PreparedStatement stat2 = con
+			.prepareStatement("INSERT INTO SocketPerson VALUES ('"+ userId + "'," + projectId + ")");
+    		stat2.executeUpdate();
+    		stat2.close();
+    		//check if they belong to the project
+    		java.sql.PreparedStatement stat1 = con
+    		.prepareStatement("select * from SocketPerson where ProjectID='"+ projectId + "'");
+    			ResultSet exists = stat1.executeQuery();
+    		
+    			while (exists.next()) {
+    				String row=exists.getString(1)+"#"+exists.getString(2)+";";
+    				person=person.concat(row);
+    			}
+    			stat1.close();
+    			con.close();
+         	}catch (ClassNotFoundException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		} catch (SQLException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}
             connections.add(this);
             String message = String.format("* %s %s",
-                    nickname, "has joined.");
+            		person, "has joined.");
             broadcast(message);
         }
 
         @Override
         protected void onClose(int status) {
+        	try{
+        		String nickName=this.nickname;
+             	int hashIndex=nickName.indexOf("#");
+             	String userId=nickName.substring(0, hashIndex);
+        	Class.forName("com.mysql.jdbc.Driver");
+    		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
+//    		Connection con =DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");	
+    		//put name in db
+    		java.sql.PreparedStatement stat2 = con
+			.prepareStatement("DELETE FROM SocketPerson WHERE Person= '"+ userId + "'");
+    		stat2.executeUpdate();
+    		stat2.close();
+    		con.close();
+        }catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
             connections.remove(this);
             String message = String.format("* %s %s",
                     nickname, "has left.");
