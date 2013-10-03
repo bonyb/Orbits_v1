@@ -3,11 +3,11 @@
  */
 // Edit Title and Description section
 	
-	function editNode(key){
+function editNode(key){
 	
 	// title
 	var titleLabel="#title_"+key;
-	$(titleLabel).hide();
+	//$(titleLabel).hide();
 	$('.editTitle').show();
 
 	//var titleVal=$(titleLabel).text();
@@ -68,8 +68,10 @@ function submitComment(key){
 	var commentLabel="#commentDiv_"+key;
 	var commentArea="#comment_"+key;
 	//$(titleLabel).hide();
-	$(discussionTh).show();
+	//$(discussionTh).show();
+	$(discussionTh).toggle("fold");
 	$(commentLabel).show();
+	//$(commentLabel).toggle("fold");
 	// focus on the comment text area
 	$(commentArea).focus();
 
@@ -80,11 +82,17 @@ function cancelComment(key){
 	var commentThread="#node_comments_"+key;
 	if(!$.trim($(commentThread).html())){
 		var discussionTh="#discussion_thread_"+key;
-		$(discussionTh).hide();
+		//$(discussionTh).hide();
+		$(discussionTh).toggle("fold");
 	}
 	var commentLabel="#commentDiv_"+key;
 	$(commentLabel).hide();
 		
+}
+
+// set the value of submit for Votes
+function setVoteId(key){
+	$("[type='hidden'][name='vote']").val(key);
 }
 
 //});
