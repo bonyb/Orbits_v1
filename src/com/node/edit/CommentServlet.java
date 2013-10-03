@@ -68,11 +68,8 @@ public class CommentServlet extends HttpServlet {
 		String[] escapetexts = utility.setEcsapeTitleDesc(comment, null);
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager
-					.getConnection("jdbc:mysql://localhost:3306/test");
-			// Connection con =
-			// DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"
-			// +"user=orbits&password=orbits");
+			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
+//			 Connection con =DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
 			// Update the title and desc with new data
 
 			// insert tag id and node id in the connection table
@@ -96,7 +93,7 @@ public class CommentServlet extends HttpServlet {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
+			con.close();
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

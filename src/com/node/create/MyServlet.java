@@ -1,24 +1,25 @@
 package com.node.create;
 
 import java.io.IOException;
+import java.nio.CharBuffer;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import websocket.chat.ChatWebSocketServlet;
+import websocket.chat.ChatWebSocketServlet.ChatMessageInbound;
 
 import com.node.display.DisplayNodesServlet;
 import com.node.utilities.UtilityFunctionsImpl;
@@ -31,6 +32,7 @@ public class MyServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private DisplayNodesServlet authLogin = new DisplayNodesServlet();
 	private UtilityFunctionsImpl utility = new UtilityFunctionsImpl();
+	
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -80,7 +82,7 @@ public class MyServlet extends HttpServlet {
 			int nodeId = insertvalues(title, parentId, description, userId,projectId);
 
 			inserttagvalues(tags, nodeId);
-			// request.
+			// request.onTextMessage(buffer);
 			String aDestinationPage="DisplayNodesServlet?projectId="+projectId+"&selectedNodeId="+nodeId;
 			String urlWithSessionID = response.encodeRedirectURL(aDestinationPage.toString());
 		    response.sendRedirect( urlWithSessionID );
@@ -101,11 +103,8 @@ public class MyServlet extends HttpServlet {
 			String userId,String projectId) throws ClassNotFoundException, SQLException,
 			ParseException {
 		Class.forName("com.mysql.jdbc.Driver");
-		Connection con = DriverManager
-				.getConnection("jdbc:mysql://localhost:3306/test");
-		// Connection con =
-		// DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"
-		// +"user=orbits&password=orbits");
+		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
+//		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
 		// System.out.println("parentId--"+parentId);
 		// to get the level no and children number of the parent
 		java.sql.PreparedStatement stat = con
@@ -145,23 +144,22 @@ public class MyServlet extends HttpServlet {
 		stat2.executeUpdate();
 		// get the node id
 		java.sql.PreparedStatement stat3 = con
-				.prepareStatement("select NodeID from test.Node where title='"
+				.prepareStatement("select NodeID from Node where title='"
 						+ escapetexts[0] + "' and Description='"
-						+ escapetexts[1] + "'");
+						+ escapetexts[1] + "' and AuthorID="+authorId+" order by CreationTimeDate DESC");
 		ResultSet result1 = stat3.executeQuery();
 		result1.first();
 		int nodeId = result1.getInt(1);
+		
+		con.close();
 		return nodeId;
 	}
 
 	void inserttagvalues(List<String> tags, int nodeId)
 			throws ClassNotFoundException, SQLException {
 		Class.forName("com.mysql.jdbc.Driver");
-		Connection con = DriverManager
-				.getConnection("jdbc:mysql://localhost:3306/test");
-		// Connection con =
-		// DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"
-		// +"user=orbits&password=orbits");
+		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
+//		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
 		// get all the tags and id's
 		java.sql.PreparedStatement stat = con
 				.prepareStatement("select * from Tags");
@@ -212,6 +210,8 @@ public class MyServlet extends HttpServlet {
 			}
 			result.first();
 		}
+		
+		con.close();
 	}
 
 }

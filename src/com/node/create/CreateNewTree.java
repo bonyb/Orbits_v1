@@ -66,13 +66,11 @@ public class CreateNewTree extends HttpServlet {
 		try {
 			String dt = utility.getCuttentDateTime();
 			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager
-					.getConnection("jdbc:mysql://localhost:3306/test");
-			// Connection con =
-			// DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"
-			// +"user=orbits&password=orbits");
+			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
+//			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
 			java.sql.PreparedStatement stat = con.prepareStatement("INSERT INTO Tree(Title,AuthorId,CreationTimeDate) VALUES ('"+ escapeTexts[0]+ "','"+ userId+ "','"+ dt+ "')");
 			stat.executeUpdate();
+			
 			//get project Id
 			java.sql.PreparedStatement stat2 = con.prepareStatement("Select ProjectID from Tree where Title='"+ escapeTexts[0]+ "' and AuthorID='"+ userId+ "' and CreationTimeDate='"+ dt+ "'");
 			ResultSet result= stat2.executeQuery();
@@ -88,7 +86,7 @@ public class CreateNewTree extends HttpServlet {
 			ResultSet resultNode= stat4.executeQuery();
 			resultNode.first();
 			String nodeId=resultNode.getString(1);
-			
+			con.close();
 			
 		// request.
 		//String path="/DisplayNodesServlet?projectId="+projectID+"&selectedNodeId="+nodeId;
@@ -119,11 +117,8 @@ public class CreateNewTree extends HttpServlet {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			
-			Connection con = DriverManager
-					.getConnection("jdbc:mysql://localhost:3306/test");
-			// Connection con =
-			// DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"
-			// +"user=orbits&password=orbits");
+			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
+//			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
 		for(int i=1;i<=8;i++){
 			String paramName= "person"+i;
 			String name= request.getParameter(paramName);
@@ -136,7 +131,7 @@ public class CreateNewTree extends HttpServlet {
 				java.sql.PreparedStatement stat = con.prepareStatement("INSERT INTO PersonTreeCon VALUES ("+ projectID+","+ result.getInt(1)+ ")");
 				stat.executeUpdate();
 				}else{
-					request.setAttribute("nonExistantPerson", name);
+					request.setAttribute("nonExistantPerson", "true");
 					RequestDispatcher dispatcher = request.getRequestDispatcher("landingPage.jsp");
 					dispatcher.forward(request, response);
 				}
@@ -145,7 +140,7 @@ public class CreateNewTree extends HttpServlet {
 		}
 		//java.sql.PreparedStatement stat2 = con.prepareStatement("INSERT INTO PersonTreeCon VALUES ("+ projectID+","+ userId+ ")");
 		//stat2.executeUpdate();
-		
+		con.close();
 		
 		}catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block

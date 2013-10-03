@@ -99,11 +99,8 @@ public class AuthAndDisplayProjects extends HttpServlet {
 
 	int parseInt = 0;
 	Class.forName("com.mysql.jdbc.Driver");
-	Connection con = DriverManager
-		.getConnection("jdbc:mysql://localhost:3306/test");
-	// Connection con =
-	// DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"
-	// +"user=orbits&password=orbits");
+	Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
+//	Connection con =DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
 	java.sql.PreparedStatement stat = con
 		.prepareStatement("select PersonID from Person where Username='"
 				+ username + "' and MyPassword='" + password + "'");
@@ -111,6 +108,7 @@ public class AuthAndDisplayProjects extends HttpServlet {
 	while (result.next()) {
 	parseInt = Integer.parseInt(result.getString(1));
 							}
+	con.close();
 	return parseInt;
 	// return ((Number) result.getObject(1)).intValue();
 
@@ -125,9 +123,7 @@ public class AuthAndDisplayProjects extends HttpServlet {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
-		// Connection con =
-		// DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"
-		// +"user=orbits&password=orbits");	
+//		Connection con =DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");	
 			//set user name in session
 			java.sql.PreparedStatement stat = con.prepareStatement("select Username from Person where PersonID='"
 					+ userId + "'");
@@ -155,7 +151,7 @@ public class AuthAndDisplayProjects extends HttpServlet {
 			
 		    RequestDispatcher dispatcher = request.getRequestDispatcher("landingPage.jsp");
 		    dispatcher.forward(request, response);
-			
+		    con.close();
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -171,19 +167,16 @@ public class AuthAndDisplayProjects extends HttpServlet {
 		Integer number=1;
 		try {
 		Class.forName("com.mysql.jdbc.Driver");
-		Connection con;
-	
-			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
+		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
+//		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");	
 		
-	// Connection con =
-	// DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"
-	// +"user=orbits&password=orbits");	
 		//set user name in session
 		java.sql.PreparedStatement stat = con.prepareStatement("select COUNT(DISTINCT PersonID) from PersonTreeCon where ProjectID='"
 				+ projectId + "'");
 		ResultSet result = stat.executeQuery();
 		result.first();
 		number=Integer.parseInt(result.getString(1))+1;
+		con.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -204,9 +197,7 @@ public class AuthAndDisplayProjects extends HttpServlet {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
-		// Connection con =
-		// DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"
-		// +"user=orbits&password=orbits");	
+//			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");	
 			//set user name in session
 			java.sql.PreparedStatement stat = con.prepareStatement("select ProjectID from PersonTreeCon where PersonID='"
 					+ userId + "'");
@@ -234,7 +225,7 @@ public class AuthAndDisplayProjects extends HttpServlet {
 				
 			}
 
-			
+			con.close();
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

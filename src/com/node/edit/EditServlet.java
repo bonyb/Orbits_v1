@@ -59,11 +59,8 @@ public class EditServlet extends HttpServlet {
 		String[] escapetexts = utility.setEcsapeTitleDesc(title, description);
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager
-					.getConnection("jdbc:mysql://localhost:3306/test");
-			// Connection con =
-			// DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"
-			// +"user=orbits&password=orbits");
+			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
+//			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
 			// Update the title and desc with new data
 
 			java.sql.PreparedStatement stat1 = con
@@ -87,6 +84,7 @@ public class EditServlet extends HttpServlet {
 			String aDestinationPage="DisplayNodesServlet?projectId="+projectId+"&selectedNodeId="+nodeId;
 			String urlWithSessionID = response.encodeRedirectURL(aDestinationPage.toString());
 		    response.sendRedirect( urlWithSessionID );
+		    con.close();
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
