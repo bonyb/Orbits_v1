@@ -11,8 +11,7 @@
 
 <style type="text/css">
 body {
-	padding-top: 60px;
-	padding-bottom: 40px;
+
 }
 </style>
 
@@ -26,13 +25,21 @@ body {
 					<span class="icon-bar"></span><span class="icon-bar"></span><span
 						class="icon-bar"></span>
 				</button>
-				<a class="brand" href="AuthAndDisplayProjects"> Orbits </a>
+				
 				<div class="nav-collapse collapse">
 					<ul class="nav">
-					<%if(session.getAttribute("username")!=null){
-						String username= session.getAttribute("username").toString();
+<%-- 					<%if(session.getAttribute("username")!=null){ --%>
+<!-- 						String username= session.getAttribute("username").toString(); -->
+<!-- 						%> -->
+<%-- 						<span class="brand">Welcome <%=username%></span><%} %> --%>
+
+						<%if(session.getAttribute("name")!=null){
+						String username= session.getAttribute("name").toString();
 						%>
 						<span class="brand">Welcome <%=username%></span><%} %>
+						
+					<a class="brand" href="AuthAndDisplayProjects"> Dashboard </a>
+						
 					<li style="padding-left:50px;margin-top:2px;margin-bottom:-15px;">
 					<form action="SessionInvalidate" method="POST">
 							<input class="btn" type="submit" value="Logout">

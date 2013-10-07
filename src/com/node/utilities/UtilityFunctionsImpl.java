@@ -1,10 +1,22 @@
 package com.node.utilities;
 
-import java.sql.ResultSet;
+import java.security.InvalidKeyException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.SecretKeySpec;
 
 public class UtilityFunctionsImpl {
 
@@ -85,4 +97,114 @@ public class UtilityFunctionsImpl {
 
 	}
 
+	
+	/**
+	 * Ecrypt password
+	 * @param password
+	 * @return
+	 */
+	public String encryptPassword(String password) {
+		String passphrase = "correct horse battery staple";
+		byte[] salt = "choose a better salt".getBytes();
+		int iterations = 10000;
+		SecretKeyFactory factory;
+		try {
+			factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+		
+		SecretKey tmp = factory.generateSecret(new PBEKeySpec(passphrase.toCharArray(), salt, iterations, 128));
+		SecretKeySpec key = new SecretKeySpec(tmp.getEncoded(), "AES");
+		
+		Cipher aes = Cipher.getInstance("AES/ECB/PKCS5Padding");
+		aes.init(Cipher.ENCRYPT_MODE, key);
+		byte[] ciphertext = aes.doFinal(password.getBytes());
+		return ciphertext.toString();
+		
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidKeySpecException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchPaddingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidKeyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalBlockSizeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (BadPaddingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public String hashPassword(String cleartext){
+		MessageDigest md;
+		try {
+			md = MessageDigest.getInstance("SHA-256");
+		
+        md.update(cleartext.getBytes());
+ 
+        byte byteData[] = md.digest();
+
+		StringBuffer hexString = new StringBuffer();
+    	for (int i=0;i<byteData.length;i++) {
+    		String hex=Integer.toHexString(0xff & byteData[i]);
+   	     	if(hex.length()==1) hexString.append('0');
+   	     	hexString.append(hex);
+    	}
+    	return hexString.toString();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	/**
+	 * Ecrypt password
+	 * @param password
+	 * @return
+	 */
+	public String decryptPassword(String encryptedpassword) {
+		byte[] value = encryptedpassword.getBytes();
+		String passphrase = "correct horse battery staple";
+		byte[] salt = "choose a better salt".getBytes();
+		int iterations = 10000;
+		SecretKeyFactory factory;
+		try {
+			factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+		
+		SecretKey tmp = factory.generateSecret(new PBEKeySpec(passphrase.toCharArray(), salt, iterations, 128));
+		SecretKeySpec key = new SecretKeySpec(tmp.getEncoded(), "AES");
+		
+		Cipher aes = Cipher.getInstance("AES/ECB/PKCS5Padding");
+		aes.init(Cipher.DECRYPT_MODE, key);
+		String cleartext = new String(aes.doFinal(value));
+		return cleartext;
+		
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidKeySpecException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchPaddingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidKeyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalBlockSizeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (BadPaddingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 }

@@ -1,6 +1,9 @@
 package com.user.project;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -9,6 +12,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,12 +28,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.node.utilities.UtilityFunctionsImpl;
+
 /**
  * Servlet implementation class AuthAndDisplayProjects
  */
 @WebServlet("/AuthAndDisplayProjects")
 public class AuthAndDisplayProjects extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private UtilityFunctionsImpl utility = new UtilityFunctionsImpl();
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -58,6 +72,13 @@ public class AuthAndDisplayProjects extends HttpServlet {
 			try {
 				String username = request.getParameter("username");
 				String password = request.getParameter("password");
+				if(username.isEmpty() || password.isEmpty()){
+					// Wrong user name and password
+					request.setAttribute("results", "none");
+					RequestDispatcher dispatcher = request
+							.getRequestDispatcher("index.jsp");
+					dispatcher.forward(request, response);
+				}else{
 				personID = authLogin(username, password);
 				if (personID == 0) {
 					// Wrong user name and password
@@ -71,6 +92,7 @@ public class AuthAndDisplayProjects extends HttpServlet {
 					session.setAttribute("userID", personID);
 					setAttributes(session,personID,request, response);
 				}
+				     }
 			} catch (ClassNotFoundException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -78,6 +100,7 @@ public class AuthAndDisplayProjects extends HttpServlet {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
+			
 		}
 		
 		
@@ -96,14 +119,13 @@ public class AuthAndDisplayProjects extends HttpServlet {
 	 */
 	int authLogin(String username, String password)
 	throws ClassNotFoundException, SQLException {
-
 	int parseInt = 0;
 	Class.forName("com.mysql.jdbc.Driver");
 	Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
 //	Connection con =DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
 	java.sql.PreparedStatement stat = con
 		.prepareStatement("select PersonID from Person where Username='"
-				+ username + "' and MyPassword='" + password + "'");
+				+ username.toLowerCase() + "' and MyPassword='" + utility.hashPassword(password.trim()) + "'");
 	ResultSet result = stat.executeQuery();
 	while (result.next()) {
 	parseInt = Integer.parseInt(result.getString(1));
@@ -113,6 +135,7 @@ public class AuthAndDisplayProjects extends HttpServlet {
 	// return ((Number) result.getObject(1)).intValue();
 
 	}
+	
 	
 	/**
 	 * Set the request attribute with all his projects
@@ -125,11 +148,12 @@ public class AuthAndDisplayProjects extends HttpServlet {
 			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
 //		Connection con =DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");	
 			//set user name in session
-			java.sql.PreparedStatement stat = con.prepareStatement("select Username from Person where PersonID='"
+			java.sql.PreparedStatement stat = con.prepareStatement("select * from Person where PersonID='"
 					+ userId + "'");
 				ResultSet result = stat.executeQuery();
 				result.first();
-				newsession.setAttribute("username", result.getString(1));
+				newsession.setAttribute("username", result.getString("Username"));
+				newsession.setAttribute("name", result.getString("FirstName").toString().concat(" "+result.getString("LastName")));
 				
 			java.sql.PreparedStatement stat2 = con.prepareStatement("select ProjectID,Title,CreationTimeDate from Tree where AuthorID='"+ userId + "'");
 			ResultSet projectdets = stat2.executeQuery();
