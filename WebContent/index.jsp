@@ -100,7 +100,7 @@
 		<form class="form-signin" action="AuthAndDisplayProjects" method="POST">
 			<h2 class="form-signin-heading">Please sign in</h2>
 			
-			<input class="input-block-level" type="text" name="username" placeholder="Username"> </input> 
+			<input class="input-block-level" type="text" name="username" placeholder="Username or Email"> </input> 
 			<input class="input-block-level" type="password" name="password" placeholder="Password"> </input> 
 			<label class="checkbox"> <input type="checkbox" value="remember-me"> </input> Remember me </label>
 			<button class="btn btn-large btn-primary" type="submit" value="Login">Sign in</button>

@@ -79,7 +79,7 @@ public class AuthAndDisplayProjects extends HttpServlet {
 							.getRequestDispatcher("index.jsp");
 					dispatcher.forward(request, response);
 				}else{
-				personID = authLogin(username, password);
+				personID = authLogin(username.trim(), password.trim());
 				if (personID == 0) {
 					// Wrong user name and password
 					request.setAttribute("results", "none");
@@ -124,8 +124,8 @@ public class AuthAndDisplayProjects extends HttpServlet {
 	Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
 //	Connection con =DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
 	java.sql.PreparedStatement stat = con
-		.prepareStatement("select PersonID from Person where Username='"
-				+ username.toLowerCase() + "' and MyPassword='" + utility.hashPassword(password.trim()) + "'");
+		.prepareStatement("select PersonID from Person where (Username='"
+				+ username.toLowerCase() + "' OR Email='"+username+"') and MyPassword='" + utility.hashPassword(password.trim()) + "'");
 	ResultSet result = stat.executeQuery();
 	while (result.next()) {
 	parseInt = Integer.parseInt(result.getString(1));
