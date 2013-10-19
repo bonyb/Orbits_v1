@@ -79,18 +79,19 @@ public class DeleteNodeServlet extends HttpServlet {
 					deleteNode(con,nodeID);
 					//delete project
 					deleteProject(con,projectId);
-					String aDestinationPage="DisplayNodesServlet?projectId="+projectId+"&selectedNodeId="+selectedId;
+					con.close();
+					String aDestinationPage="AuthAndDisplayProjects";
 					String urlWithSessionID = response.encodeRedirectURL(aDestinationPage.toString());
 				    response.sendRedirect( urlWithSessionID );
 					
+					
 				}else{
 					deleteNode(con,nodeID);	
+					con.close();
+					String aDestinationPage="DisplayNodesServlet?projectId="+projectId+"&selectedNodeId="+selectedId;
+					String urlWithSessionID = response.encodeRedirectURL(aDestinationPage.toString());
+				    response.sendRedirect( urlWithSessionID );
 				}
-				con.close();
-				
-				String aDestinationPage="AuthAndDisplayProjects";
-				String urlWithSessionID = response.encodeRedirectURL(aDestinationPage.toString());
-			    response.sendRedirect( urlWithSessionID );
 				//RequestDispatcher dispatcher = request
 				//		.getRequestDispatcher("/DisplayNodesServlet?projectId="+projectId+"&selectedNodeId="+nodeID);
 				//dispatcher.forward(request, response);
