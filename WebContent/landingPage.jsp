@@ -37,7 +37,8 @@ if(null!=request.getAttribute("nonExistantPerson")){%>
 <%
 }
 %>
-<img src="images/ui-orbits-background-v1.png" style="width:90%;height:auto;position:fixed;z-index:-2;"/>
+<div id="project_field" style="position:absolute;left:0%;top:0%;height:100%;width:100%">
+<img src="images/ui-orbits-background-v1.png" style="width:90%;height:auto;position:absolute;z-index:-2;"/>
 
 <div class="new_project_node octagonRed">
 <img src="images/shadow-node.png" style="width:100%;height:243%;position:absolute;top:-71%;left:0%;"/>
@@ -75,7 +76,7 @@ int i = 1;
 int x_position = 5;
 int y_position = 0;
 
-int x_padding = 10;
+int x_padding = 15;
 int y_padding = 6;
 
 int node_height = 1;
@@ -93,7 +94,7 @@ if (null != hashmap && !hashmap.isEmpty()) {
 		if(flag){
 		flag=false;%>
 		<div class="new_project" id="project_<%=key%>" 
-		style="left:60px;top:165px;position:relative;">
+		style="left:<%=((i*x_padding))+x_position%>em;top:165px;position:absolute;">
 		
 			<div class="project_title_box">
 				<div class="project_title"><%=value.get(0)%></div>
@@ -102,6 +103,13 @@ if (null != hashmap && !hashmap.isEmpty()) {
 					<div class="project_author"><%=username%></div>
 				</div>
 			</div>
+				<div class="delete_project">
+					<form action="DeleteProjectServlet" method="post">
+							<input type="hidden" value="<%=key%>" name="projectId" /> <input
+								type="image" src="images/icons/delete_icon.png" alt="Submit"
+								id="delete_<%=key%>" align="right" width="48" height="20" style="margin-left:-20px">
+							</form>
+					</div>
 			<a class="project_link octagonBlack" href="DisplayNodesServlet?projectId=<%=key%>">
 				<img src="images/shadow-node.png" style="width:100%;height:243%;position:absolute;top:-71%;left:0%;"/>
 				<div class="contributors_num"><%=value.get(2)%></div>
@@ -139,7 +147,7 @@ i = 1;
 x_position = 5;
 y_position = 0;
 
-x_padding = 10;
+x_padding = 15;
 y_padding = 6;
 
 node_height = 1;
@@ -175,10 +183,12 @@ if (null != hashmapContri && !hashmapContri.isEmpty()) {
 	
 }
 %>
+</div>
 <script>
 	$(function() {
    		$( ".new_project" ).draggable();
    		$( ".new_project_node" ).draggable();
+   		$("#project_field").draggable();
  	});
   </script>
   	

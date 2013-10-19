@@ -26,6 +26,8 @@
 <link rel="stylesheet" href="styles/jsPlumbDemo.css">
 <link rel="stylesheet" href="styles/stateMachineDemo.css">
 <link rel="stylesheet" href="styles/style.css">
+<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+
 <style type="text/css">
 input#chat {
 	width: 410px
@@ -67,119 +69,117 @@ input#chat {
 <script type="text/javascript" src="scripts/new_node.js"></script>
 
 <script type="text/javascript">
-		$(document).ready(function(){
-		var Chat = {};
-		var dURL = document.URL;
-		var pid = dURL.indexOf("projectId=");
-		var ampIndex = dURL.indexOf("&");
-		if(ampIndex>0){
-			pid = dURL.slice(pid+10,ampIndex);
-		}
-		else{
-			pid = dURL.slice(pid+10,dURL.length);
-		}
-		//alert("pid"+pid);
-        Chat.socket = null;
+	$(document).ready(function(){
+	var Chat = {};
+	var dURL = document.URL;
+	var pid = dURL.indexOf("projectId=");
+	var ampIndex = dURL.indexOf("&");
+	if(ampIndex>0){
+		pid = dURL.slice(pid+10,ampIndex);
+	}
+	else{
+		pid = dURL.slice(pid+10,dURL.length);
+	}
+	//alert("pid"+pid);
+    Chat.socket = null;
 
-        Chat.connect = (function(host) {
-            if ('WebSocket' in window) {
-                Chat.socket = new WebSocket(host);
-            } else if ('MozWebSocket' in window) {
-                Chat.socket = new MozWebSocket(host);
-            } else {
-                Console.log('Error: WebSocket is not supported by this browser.');
-                return;
-            }
+    Chat.connect = (function(host) {
+    if ('WebSocket' in window) {
+    	Chat.socket = new WebSocket(host);
+        } else if ('MozWebSocket' in window) {
+        	Chat.socket = new MozWebSocket(host);
+        } else {
+        	Console.log('Error: WebSocket is not supported by this browser.');
+            return;
+        }
 
-            Chat.socket.onopen = function () {
-				Console.log('Info: WebSocket connection opened.');
-				var dURL = document.URL;
-				var nodeFrom = dURL.indexOf("&selectedNodeId=");
-					if(ampIndex>0){
-						var nodeIam = dURL.slice(nodeFrom+16,dURL.length);
-	               		Chat.socket.send(nodeIam);
-	//                  document.getElementById('chat').onkeydown = function(event) {
-	//                  if (event.keyCode == 13) {
-	//                  	Chat.sendMessage();
-	//                  }
-	//                  };
-	            	}
-			};
+        Chat.socket.onopen = function () {
+			Console.log('Info: WebSocket connection opened.');
+			var dURL = document.URL;
+			var nodeFrom = dURL.indexOf("&selectedNodeId=");
+			if(ampIndex>0){
+				var nodeIam = dURL.slice(nodeFrom+16,dURL.length);
+	       		Chat.socket.send(nodeIam);
+	//          document.getElementById('chat').onkeydown = function(event) {
+	//          	if (event.keyCode == 13) {
+	//              	Chat.sendMessage();
+	//              }
+	//          };
+	        }
+		};
             
-            Chat.socket.onclose = function () {
-                document.getElementById('chat').onkeydown = null;
-                Console.log('Info: WebSocket closed.');
+		Chat.socket.onclose = function () {
+        document.getElementById('chat').onkeydown = null;
+        Console.log('Info: WebSocket closed.');
                 
-                //$('.notification_flag').click(function(){});
+            //$('.notification_flag').click(function(){});
 
-            };
+		};
             
-            Chat.socket.onmessage = function (message) {
-            	var displayMessage=message.data;
-            	if(displayMessage.indexOf(pid)>0){
-                	Console.log(message.data);
-                	updateHandler(displayMessage);
-            	}
-            };
-        });
-       
-        Chat.initialize = function() {
-            if (window.location.protocol == 'http:') {
-               // Chat.connect('ws://' + window.location.host + '/Orbits_v1/websocket/chat');
-            	Chat.connect('ws://' + window.location.host + '/Orbits_v1/updatedata?pid='+pid);
-            } else {
-                Chat.connect('wss://' + window.location.host + '/Orbits_v1/updatedata?pid='+pid);
+        Chat.socket.onmessage = function (message) {
+        	var displayMessage=message.data;
+            if(displayMessage.indexOf(pid)>0){
+            	Console.log(message.data);
+                updateHandler(displayMessage);
             }
         };
+	});
+       
+	Chat.initialize = function() {
+		if (window.location.protocol == 'http:') {
+			// Chat.connect('ws://' + window.location.host + '/Orbits_v1/websocket/chat');
+			Chat.connect('ws://' + window.location.host + '/Orbits_v1/updatedata?pid='+pid);
+        } 
+		else {
+        	Chat.connect('wss://' + window.location.host + '/Orbits_v1/updatedata?pid='+pid);
+        }
+	};
 
-        Chat.sendMessage = (function() {
-            var message = document.getElementById('chat').value;
-            if (message != '') {
-                Chat.socket.send(message);
-                document.getElementById('chat').value = '';
-            }
-        });
+    Chat.sendMessage = (function() {
+		var message = document.getElementById('chat').value;
+		if (message != '') {
+			Chat.socket.send(message);
+			document.getElementById('chat').value = '';
+		}
+	});
 
-        var Console = {};
+	var Console = {};
 
-        Console.log = (function(message) {
-            var console = document.getElementById('console');
-            var p = document.createElement('p');
-            p.style.wordWrap = 'break-word';
-            p.innerHTML = message;
-            console.appendChild(p);
-            while (console.childNodes.length > 25) {
-                console.removeChild(console.firstChild);
-            }
-            console.scrollTop = console.scrollHeight;
-        });
+	Console.log = (function(message) {
+		var console = document.getElementById('console');
+		var p = document.createElement('p');
+		p.style.wordWrap = 'break-word';
+		p.innerHTML = message;
+		console.appendChild(p);
+		while (console.childNodes.length > 25) {
+			console.removeChild(console.firstChild);
+		}
+		console.scrollTop = console.scrollHeight;
+	});
         
-        Chat.initialize();
-		});
-		
-</script>
+	Chat.initialize();
+});
 
+</script>
 </head>
-<body data-library="jquery"
-	onload="getCookie(<%=request.getParameter("selectedNodeId")%>)"
-	onunload="setCookie()">
+
+<body data-library="jquery" onload="getCookie(<%=request.getParameter("selectedNodeId")%>)" onunload="setCookie()">
 	<%@include file="header.jsp"%>
 
 	<%
-		HashMap<String, Color> colorMap = new HashMap<String, Color>();
+	HashMap<String, Color> colorMap = new HashMap<String, Color>();
 	%>
 
 
 	<div class="mainContainer">
 		<div id="node_field" style="position: absolute" class="check">
 			<div id="demo">
-
 				<%
 				String username = session.getAttribute("username").toString();
 				String projectId = request.getParameter("projectId");
 				String selectedNodeId = request.getParameter("selectedNodeId");
 				String userID = session.getAttribute("userID").toString();
-				//out.println("Hello - "+userID);
+				pageContext.setAttribute("userID",userID);
 				int i = 0;
 				int position;
 
@@ -242,22 +242,18 @@ input#chat {
 									colorMap.put(key, parentColor);
 									//out.println("node"+value.get(0));
 
-								}
-			%>
+								}%>
 				<!-- Old Node -->
 				<%
 				double radius = 2;
-								double uv = Integer.parseInt(value.get(7)
-										.toString()) + 1;
-								double dv = Integer.parseInt(value.get(8)
-										.toString()) + 1;
-								double inc = ((uv - dv) / dv) * 0.6;
+				double uv = Integer.parseInt(value.get(7).toString()) + 1;
+				double dv = Integer.parseInt(value.get(8).toString()) + 1;
+				double inc = ((uv - dv) / dv) * 0.6;
 
-								radius = 2 + inc;
-								// to check if same author
-								if (userID
-										.equalsIgnoreCase(value.get(6).toString())) {
-			%>
+				radius = 2 + inc;
+				// to check if same author
+				if (userID.equalsIgnoreCase(value.get(6).toString())) {%>
+
 				<div class="current_user" style="display: none"><%=username%></div>
 				<div class="projectID"><%=projectId%></div>
 				<div class="w circle" id="<%=key%>" onclick="cancelEdit(<%=key%>)"
@@ -274,14 +270,11 @@ input#chat {
 
 					<a href="#" class="addnodemap_btn" id="addnodemap_<%=key%>"
 						onclick="addNode(<%=key%>)"><img
-						src="images/icons/addbutton-onmap-v1.png" alt="Add Node" /> </a>
+						src="images/icons/addbutton-onmap-v2.png" alt="Add Node" /> </a>
 
 
 				</div>
-				<%
-				} else {
-			%>
-
+				<%} else {%>
 				<div class="w" id="<%=key%>" onclick="cancelEdit(<%=key%>)"
 					style="left:<%=((i * x_padding)) + x_position%>em; top:<%=(node_height * y_padding)
 										+ y_position%>em;width: <%=radius%>em;height: <%=radius%>em; background-color: rgb(<%=parentColor.getRed()%>, <%=parentColor.getGreen()%>, <%=parentColor.getBlue()%>);">
@@ -294,12 +287,10 @@ input#chat {
 
 					<a href="#" class="addnodemap_btn" id="addnodemap_<%=key%>"
 						onclick="addNode(<%=key%>)"><img
-						src="images/icons/addbutton-onmap-v1.png" alt="Add Node" /> </a>
+						src="images/icons/addbutton-onmap-v2.png" alt="Add Node" /> </a>
 
 				</div>
-				<%
-				}
-			%>
+				<%}%>
 
 				<div class="parent" id="<%=value.get(2)%>"><%=value.get(2)%></div>
 
@@ -370,13 +361,16 @@ input#chat {
 							//to set the user's vote
 							pageContext.setAttribute("vote",
 									value.get(15));
+							pageContext.setAttribute("author",
+									value.get(6).toString());
+
 		%>
 			<!-- Old Node -->
 			<div class="node_info" id="des_<%=key%>">
 
 				<%
-				// 				if (parray[pcounter] != parray[pcounter - 1]) { System.out.println("a line is here");}
-								pageContext.setAttribute("nodeno", key);
+				// if (parray[pcounter] != parray[pcounter - 1]) { System.out.println("a line is here");}
+					pageContext.setAttribute("nodeno", key);
 			%>
 
 				<!-- 			<div> -->
@@ -396,11 +390,23 @@ input#chat {
 						style="display: none;" value="<%=value.get(0)%>"
 						form="editForm_<%=key%>" maxlength="25">
 
-					<%-- 					<img class="mark_icon" id="mark_icon_<%=key%>" src="images/icons/mark_icon.png" /> --%>
+					<%--<img class="mark_icon" id="mark_icon_<%=key%>" src="images/icons/mark_icon.png" /> --%>
 
-					<!-- Comment submit section -->
-					<img style="cursor: pointer;" class="comment_icon" id="comment_icon_<%=key%>" src="images/icons/comment_icon.png" onclick="submitComment(<%=key%>);" />
 					
+					<!-- Comment submit section -->
+					<img style="cursor: pointer;" class="comment_icon" id="comment_icon_<%=key%>" src="images/icons/comment-v2-3.png" onclick="submitComment(<%=key%>);" />
+					
+					<!-- Delete node section -->
+					<c:if test="${userID == author}">
+					<div class="delete_form">
+					<form action="DeleteNodeServlet" method="post">
+							<input type="hidden" value='${nodeno}' name="nodeID" /> <input
+								type="hidden" value="<%=projectId%>" name="projectId" /> <input
+								type="image" src="images/icons/delete_icon.png" alt="Submit"
+								id="delete_<%=key%>" align="right" width="48" height="20">
+							</form>
+					</div>
+					</c:if>
 					<!-- Different Votes -->
 					<div class="priority_btn">
 						<form action="ImportanceVoteServlet" method="post">
@@ -442,8 +448,8 @@ input#chat {
 				</div>
 
 
-				<div class="text_edit_bar"></div>
 				<!-- Display Description -->
+				<div class=node_content>
 				<%
 							if (value.get(1) != null) {
 						%>
@@ -453,13 +459,10 @@ input#chat {
  %>
 
 				<!-- Edit Description -->
-				<textarea class="editDesc" rows="4" cols="50" maxlength="1000"
-					name="description" style="display: none;" form="editForm_<%=key%>">
-					<%
-							if (value.get(1) != null) {
+				<textarea class="editDesc" rows="4" cols="50" maxlength="1000" name="description" style="display: none;" form="editForm_<%=key%>">
+					<%if (value.get(1) != null) {
 						%><%=value.get(1)%>
-					<%
-							}
+					<%	}
 						%>
 				</textarea>
 				<div class="node_content_under_bar">
@@ -472,7 +475,7 @@ input#chat {
 							//more than one person s vote
 							String[] upList=upVoteList.split("#");
 							for(int u=0;u<upList.length;u++){
-							
+
 								String uname=upList[u].substring(0,upList[u].indexOf('.'));
 								String unumber=upList[u].substring(upList[u].indexOf('.')+1);
 								out.println(uname);
@@ -487,7 +490,7 @@ input#chat {
 						}
 				}
 				%>
-				
+
 				<!-- DownVotes -->
 				<% int dlength=value.get(17).toString().length()-1;
 					if(dlength>6){
@@ -497,7 +500,7 @@ input#chat {
 							//more than one person s vote
 							String[] upList=upVoteList.split("#");
 							for(int u=0;u<upList.length;u++){
-							
+
 								String uname=upList[u].substring(0,upList[u].indexOf('.'));
 								String unumber=upList[u].substring(upList[u].indexOf('.')+1);
 								out.println(uname);
@@ -520,13 +523,13 @@ input#chat {
 
 							<%
 								for (int tagno = 19; tagno <= value.size(); tagno++) {%><div class="node_tag"><%
-									
+
 														out.println(value.get(tagno - 1));
-								
+
 								%></div><%
 													}
 							%>
-							
+
 						</c:if>
 
 					</div>
@@ -551,12 +554,13 @@ input#chat {
 				<!-- 				</div> -->
 				<!-- 			</div> -->
 
-				<div class="add_icon" style="cursor: pointer;">
-					<img class="new_btn" id="new_btn_<%=key%>"
-						src="images/icons/add-buttn-test1.png" />
-				</div>
+<!-- 				<div class="add_icon" style="cursor: pointer;"> -->
+<%-- 					<img class="new_btn" id="new_btn_<%=key%>" --%>
+<!-- 						src="images/icons/add-buttn-test1.png" /> -->
+<!-- 				</div> -->
 
-				<div class="new_node_form" id="new_node_form_<%=key%>">
+
+					<div class="new_node_form" id="new_node_form_<%=key%>">
 					<div class="add_node_title">
 						<form action="MyServlet" method="POST">
 							<input class="input_title" type="text" name="title"
@@ -651,21 +655,75 @@ input#chat {
 						</form>
 					</div>
 				</div>
+				</div>
 			</div>
 
 			<%
-			}
+				}
 					}
 					i++;
 					att = "node" + i;
 				}
-			}
 		%>
 
+		<%}%>
 
 
 		</div>
 		<!-- #content_field end-->
+
+		<!-- New Node Forn Start -->
+		<%
+	i = 0;
+
+	att = "node" + i;
+	attr = request.getAttributeNames();
+	/*do{System.out.println("Bloody fuck1-"+attr.nextElement());}while(attr.hasMoreElements());*/
+	while (attr.hasMoreElements()) { //System.out.println("Bloody fuck1-"+attr.nextElement());
+
+		int node_height = 1;
+		if (attr.nextElement().toString().startsWith("node")) {
+			Map<String, List> hashmap = new HashMap<String, List>();
+			hashmap = (HashMap<String, List>) request.getAttribute(att);
+			if (null != hashmap && !hashmap.isEmpty()) {
+						// 						int[] parray;
+
+						// 						parray = new int[25];
+				int pcounter = 0;
+				Iterator entries = hashmap.entrySet().iterator();
+				while (entries.hasNext()) {
+
+					Map.Entry entry = (Map.Entry) entries.next();
+					String key = (String) entry.getKey();
+					List value = (List) entry.getValue();
+					//put it in an array
+					pcounter++;
+							// 							parray[pcounter] = Integer.parseInt(value.get(2).toString());
+					position = Integer.parseInt(key);
+					pageContext.setAttribute("nodelistSize",
+					value.size());
+							//to set the user's vote
+					pageContext.setAttribute("vote",
+					value.get(15));
+		%>
+
+
+<!--  INSERT NEW NODE FORM HERE -->
+
+					<%
+				}
+					}
+					i++;
+					att = "node" + i;
+				}
+		%>
+
+		<%}%>
+
+
+
+		<!-- New Node Forn End -->
+
 
 		<div style="width: 50px; position: fixed; left: 0%; top: 0%;">
 			<p>
@@ -679,6 +737,7 @@ input#chat {
 		<div id="notification_board"></div>
 	</div>
 	<!-- #mainContainer end-->
+
 
 	<script>
   	$(function() {

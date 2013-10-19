@@ -72,7 +72,7 @@ public class AuthAndDisplayProjects extends HttpServlet {
 			try {
 				String username = request.getParameter("username");
 				String password = request.getParameter("password");
-				if(username.isEmpty() || password.isEmpty()){
+				if(null == username || null == password){
 					// Wrong user name and password
 					request.setAttribute("results", "none");
 					RequestDispatcher dispatcher = request

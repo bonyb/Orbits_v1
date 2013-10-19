@@ -588,8 +588,9 @@ public class DisplayNodesServlet extends HttpServlet {
 					.prepareStatement("select NodeID from Node where ProjectId='"
 							+ projectId + "' and Parent=0");
 			ResultSet firstNode = stat.executeQuery();
-			firstNode.first();
+			while(firstNode.next()){
 			selectedNodeId=firstNode.getString(1);
+		}
 			con.close();
 		}
 		RequestDispatcher dispatcher = request.getRequestDispatcher("main.jsp?projectId="+projectId+"&selectedNodeId="+selectedNodeId);

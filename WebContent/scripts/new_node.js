@@ -4,7 +4,7 @@ $(document).ready(function() {
 	var nodeDesArray = new Array();
 	var nodeTagArray = new Array();
 	var newTagArray = new Array();
-	
+
 	nodeArray = document.getElementsByClassName("w");
 	nodePopupArray = document.getElementsByClassName("node_pop_up");
 	nodeInfoArray = document.getElementsByClassName("node_info");
@@ -15,46 +15,47 @@ $(document).ready(function() {
 	editNodeMenuArray = document.getElementsByClassName("edit_node_menu");
 	nodeTagArray = document.getElementsByClassName("node_tag_input");
 	newTagArray = document.getElementsByClassName("new_tag");
-	
+
 	// Hide Elements on Load //
 	$(".projectID").hide();
 	for(var i=0;i<newNodeForm.length;i++)
 	{
+		$(newNodeForm[i]).draggable();
+
 		$(newNodeForm[i]).hide();
 	}
-	
+
 	for(var i=0;i<newNodeMapBtnArray.length;i++)
 	{
 		$(newNodeMapBtnArray[i]).hide();
 	}
-	
+
 	for(var i=0;i<nodePopupArray.length;i++)
 	{
 		$(nodePopupArray[i]).hide();
 	}
-	
+
 	for(var i=0;i<nodeInfoArray.length;i++)
 	{
 		$(nodeInfoArray[i]).hide();
 	}
-	
+
 	for(var i=0;i<editNodeMenuArray.length;i++)
 	{
 		//$(editNodeMenuArray[i]).hide();
 	}	
 	// ---- //
-	
+
 	for(var i=0;i<nodeTagArray.length;i++)
 	{
 		$(nodeTagArray[i]).hide();
 	}
-		
+
 	for(var i=0;i<nodeArray.length;i++)
 	{	
 		// display the user s vote
 		var voteId="#vote_"+nodeArray[i].id;
 		var vote=$.trim($(voteId).html());
-		//alert("vote"+voteId);
 		if(vote !="0"){
 		var voteId="#up_btn_"+vote+"_"+nodeArray[i].id;
 		$(voteId).attr('style','border: 3px solid #000000');
@@ -62,17 +63,15 @@ $(document).ready(function() {
 		$(nodeArray[i]).find('.notification_flag').click(function() {
 			window.location.reload(true);
 		});
-		
-		$(nodeArray[i]).find('.notification_flag').hide();
 
-		
+		$(nodeArray[i]).find('.notification_flag').hide();
 		
 		var commentThread="#node_comments_"+nodeArray[i].id;
-		if(!$.trim($(commentThread).html())){
+		//if(!$.trim($(commentThread).html())){
 			var discussionTh="#discussion_thread_"+nodeArray[i].id;
 			$(discussionTh).hide();
-		}
-		
+		//}
+
 		$(nodeArray[i]).click(function(){ 
     		var contentPanelId = jQuery(this).attr("id");
     		var idCheck = "#des_"+contentPanelId;
@@ -83,10 +82,10 @@ $(document).ready(function() {
     		for(var x=0;x<nodeArray.length;x++)
     		{
 	    		var shownDiv="#des_"+nodeArray[x].id;
-	    		
+
 	    		//var sBtn=$(nodeArray[x]).find('.addnodemap_btn').attr("id");
 	    		//var shownBtn="#"+sBtn;
-	    		
+
 	    		//$(shownBtn).hide();
 
 	    		if($(shownDiv).is(":visible")){
@@ -116,14 +115,14 @@ $(document).ready(function() {
     		
     		$('#content_field').find('.editTitle').hide();
     	});
-		
-		
-		
+
+
+
 		//var sBtn=$(nodeArray[x]).find('.addnodemap_btn').attr("id");
 		//var shownBtn="#"+sBtn;
 //    	var nNbID = jQuery(this).find('.addnodemap_btn').attr("id");
 //    	var newNodeBtnId = "#"+nNbID;
-		
+
 		// Hover on Node \\ 
 		var shownBtn;
 		$(nodeArray[i]).hover(function(e){
@@ -136,6 +135,23 @@ $(document).ready(function() {
 			$(shownBtn).show(); 
 			//}, function(){ $(shownBtn).hide(); 
 		}); 
+		
+		// for delete
+		var deleteNode="#delete_"+nodeArray[i].id;
+		$(deleteNode).click(function(e){ 
+			// check if has children then do not let them delete
+			
+		var answer = confirm ('You will also delete the child nodes. Are you sure?');
+		if (answer){
+			// do nothing	
+			return true;	
+		}
+		else{
+			alert('you chose well');
+			e.preventDefault();
+			return false;
+		} });
+
     }	
 //	var node_pop; 
 //	var moveLeft = -60; 
@@ -156,7 +172,7 @@ $(document).ready(function() {
 //			$(node_pop).css('top', e.pageY + moveDown).css('left', e.pageX + moveLeft); 
 //			}); 
 //	}
-	
+
 	for(var i=0;i<newNodeBtnArray.length;i++)
 	{		
     	// Click on Node \\
@@ -168,7 +184,7 @@ $(document).ready(function() {
     		$(this).parent().next().find(".input_title" ).focus();
     	});
 	}
-	
+
 	for(var i=0;i<editNodeBtnArray.length;i++)
 	{		
     	// Click on Node \\
@@ -176,15 +192,15 @@ $(document).ready(function() {
     		//$(this).parent().parent().parent().children(".edit_node_menu").show();
     	});
 	}
-	
+
 	for(var i=0;i<nodeTagArray.length;i++)
 	{
 		$(nodeTagArray[i]).click(function(){
-			
-			
+
+
 		});
 	}
-	
+
 	for(var i=0;i<newTagArray.length;i++)
 	{
 		var n=0;
@@ -193,7 +209,7 @@ $(document).ready(function() {
 			var previousTag1 = $(this).prevAll(".node_tag1");
 			var previousTag2 = $(this).prevAll(".node_tag2");
 			var previousTag3 = $(this).prevAll(".node_tag3");
-			
+
 			if(n==1)
 				previousTag1.show();
 			if(n==2)
@@ -203,9 +219,23 @@ $(document).ready(function() {
 		});
 	}
 	
+	//to delete nodes
+	function confirmation(message){
+		var answer = confirm (message);
+		if (answer){
+			// do nothing	
+			return true;	
+		}
+		else{
+			alert('you chose well');
+			return false;
+		}
+
+	}
+
 	$("#demo").offset({left:$("#node_field").width/2-($("#demo").width/2),top:$("#node_field").height/2-($("#demo").height/2)});
 	$("#node_field").offset({left:$(window).width/2-($("#node_field").width/2),top:$(window).height/2-($("#node_field").height/2)});
-	
+
 //	var gesturesX = 0;
 //	var gesturesY = 0;
 //	var startPositionX = 0;
@@ -246,17 +276,13 @@ $(document).ready(function() {
 //	    isMouseDown = false;
 //	    return false;
 //	});
-	
+
 });
 
 function addNode(key){
-	
+
 	// Click on Node \\
 	var newNodeForm = "#new_node_form_"+key;
 	$(newNodeForm).show();
 	$(newNodeForm).find(".input_title" ).focus();	
 }
-
-
-
-                  
