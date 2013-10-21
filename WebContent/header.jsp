@@ -28,7 +28,7 @@ body {
 				
 				<div class="nav-collapse collapse">
 					<ul class="nav">
-<%-- 					<%if(session.getAttribute("username")!=null){ --%>
+<%--  				<%if(session.getAttribute("username")!=null){ --%>
 <!-- 						String username= session.getAttribute("username").toString(); -->
 <!-- 						%> -->
 <%-- 						<span class="brand">Welcome <%=username%></span><%} %> --%>
