@@ -68,7 +68,7 @@
   <servlet>
     <display-name>CreateNewTree</display-name>
     <servlet-name>CreateNewTree</servlet-name>
-    <servlet-class>com.node.create.CreateNewTree</servlet-class>
+    <servlet-class>com.user.project.CreateNewTree</servlet-class>
   </servlet>
   <servlet>
     <display-name>AuthAndDisplayProjects</display-name>
