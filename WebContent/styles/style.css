@@ -356,15 +356,14 @@ article, aside, dialog, figure, footer, header, hgroup, menu, nav, section {
     background-color:white;
     
     border-radius: 5px 5px 5px 5px;
-    max-height:700px;
-    min-height:384px;
-    left: 70%;
+    height:40%;
+    //min-height:384px;
+    right: 20px;
     position: fixed;
-    top: 7%;
+    top: 60px;
     width: 28%;
     z-index: 100;
 }
-
 .discussion_thread {
     -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
     background-color: #FFFFFF;
@@ -497,7 +496,7 @@ article, aside, dialog, figure, footer, header, hgroup, menu, nav, section {
     position:relative;
     top:0%;
     left:0%;
-    height:100%;
+    height:78px;
     width:100%;
 
 
@@ -521,6 +520,12 @@ article, aside, dialog, figure, footer, header, hgroup, menu, nav, section {
     width: 100%;
     top:0%;
 }
+
+.title_content{
+    display: inline-block;
+    cursor:pointer;
+}
+
 .author_name {
     -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
     position:absolute;
@@ -565,19 +570,34 @@ article, aside, dialog, figure, footer, header, hgroup, menu, nav, section {
 
 .node_content{
     position:relative;
-    height:100%;
     min-height:200px;
+    top:0px;
+}
+
+.save_content{
+	position:absolute;
+	bottom:0px;
+	right:20px;
 }
 
 .node_description {
     position:relative;
     -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
     font-family: Arial;
-    font-size: 1.3em;
+    //font-size: 1.3em;
     margin-top: 50px;
     padding: 5% 5% 5% 5%;
     text-align: left;
-    word-wrap: break-word;
+    //word-wrap: break-word;
+    height:100%;
+}
+.node_description_otheruser {
+    position:relative;
+    -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+    font-family: Arial;
+    padding: 3% 3% 3% 3%;
+    text-align: left;
+    //word-wrap: break-word;
     height:100%;
 }
 .node_content_under_bar {
@@ -677,9 +697,9 @@ article, aside, dialog, figure, footer, header, hgroup, menu, nav, section {
 
 .comment_icon {
     -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
-    right: 8%;
+    right: 1%;
     position: absolute;
-    top: 18%;
+    top: 5px;
 }
 
 .comment_submit_btn {
@@ -783,6 +803,8 @@ article, aside, dialog, figure, footer, header, hgroup, menu, nav, section {
     position: absolute;
     top: 11px;
     min-width:80%;
+    display: inline-block;
+    
 }
 .editDesc {
     -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
@@ -793,8 +815,8 @@ article, aside, dialog, figure, footer, header, hgroup, menu, nav, section {
 }
 .editNode {
     position: absolute;
-    bottom:-30%;
-    right:10%;
+    bottom:19px;
+    right:20%;
 }
 
 .edit_node_cancel{
@@ -822,7 +844,6 @@ article, aside, dialog, figure, footer, header, hgroup, menu, nav, section {
     -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
     background-color: #F5F5F5;
     border-radius: 5px 5px 5px 5px;
-    box-shadow: 0 0 7px 0;
     min-height: 35%;
     left: 53%;
     position: fixed;
@@ -833,7 +854,7 @@ article, aside, dialog, figure, footer, header, hgroup, menu, nav, section {
 .add_node_title {
     -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
     border-radius: 5px 5px 0px 0px;
-    background-color: #336666;
+    background-color: #555555;
     color: #000000;
     float: left;
     font-family: Arial;
@@ -874,6 +895,16 @@ article, aside, dialog, figure, footer, header, hgroup, menu, nav, section {
     width: 100%;
     z-index:100;
 }
+
+.new_node_form_title_bar{
+
+}
+
+.new_node_form_content{
+    position:relative;
+    top:50px;
+}
+
 .new_node_under_bar {
     -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
     border-top: 1px solid lightgrey;
@@ -881,7 +912,7 @@ article, aside, dialog, figure, footer, header, hgroup, menu, nav, section {
     padding-left: 25px;
     padding-top: 8px;
     position: absolute;
-    bottom: 0%;
+    bottom: -35px;
     width: 100%;
     height:50px;
 }
@@ -900,14 +931,14 @@ article, aside, dialog, figure, footer, header, hgroup, menu, nav, section {
     font-family: Arial;
 }
 .new_node_submit_btn {
-    right: 50px;
+    right: 58px;
     position: absolute;
     top: 10%;
 }
 .new_node_cancel_btn {
-    right: 5px;
+    right: 15px;
     position: absolute;
-    bottom: 4px;
+    bottom: 6px;
 }
 .nodeForm {
     -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
@@ -974,6 +1005,7 @@ article, aside, dialog, figure, footer, header, hgroup, menu, nav, section {
 }
 .errorWrapper {
     color: #800000;
+    margin-top:-44px;
 }
 h1 {
     color: #666666;

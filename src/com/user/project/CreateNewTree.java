@@ -68,6 +68,12 @@ public class CreateNewTree extends HttpServlet {
 			Class.forName("com.mysql.jdbc.Driver");
 			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
 //			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
+			String contributorNotExistant=checkContributors(request,userId);
+			if(!contributorNotExistant.isEmpty()){
+				request.setAttribute("nonExistantPerson", contributorNotExistant);
+				RequestDispatcher dispatcher = request.getRequestDispatcher("AuthAndDisplayProjects");
+				dispatcher.forward(request, response);
+			}else{
 			java.sql.PreparedStatement stat = con.prepareStatement("INSERT INTO Tree(Title,AuthorId,CreationTimeDate) VALUES ('"+ escapeTexts[0]+ "','"+ userId+ "','"+ dt+ "')");
 			stat.executeUpdate();
 			
@@ -76,10 +82,13 @@ public class CreateNewTree extends HttpServlet {
 			ResultSet result= stat2.executeQuery();
 			result.first();
 			String projectID=result.getString(1);
+			
 			// insert into Node table
 			java.sql.PreparedStatement stat3 = con.prepareStatement("INSERT INTO Node(Title,AuthorId,CreationTimeDate,ProjectId,Parent,Levelno,countChildren,UpVote,DownVote) VALUES ('"+ escapeTexts[0]+ "','"+ userId+ "','"+ dt+ "',"+projectID+",0,1,0,0,0)");
 			stat3.executeUpdate();
-			enterContributors(request,response,projectID,userId);
+			
+			//add the contributors to the project
+			enterContributors(request, projectID, userId);
 			
 			//get the nodeId that just got created
 			java.sql.PreparedStatement stat4 = con.prepareStatement("Select NodeID from Node where ProjectId="+ projectID);
@@ -87,15 +96,10 @@ public class CreateNewTree extends HttpServlet {
 			resultNode.first();
 			String nodeId=resultNode.getString(1);
 			con.close();
-			
-		// request.
-		//String path="/DisplayNodesServlet?projectId="+projectID+"&selectedNodeId="+nodeId;
-		//RequestDispatcher dispatcher = request
-			//	.getRequestDispatcher(path);
-		//dispatcher.forward(request, response);
-		String aDestinationPage="DisplayNodesServlet?projectId="+projectID+"&selectedNodeId="+nodeId;
-		String urlWithSessionID = response.encodeRedirectURL(aDestinationPage.toString());
-	    response.sendRedirect( urlWithSessionID );
+			String aDestinationPage="DisplayNodesServlet?projectId="+projectID+"&selectedNodeId="+nodeId;
+			String urlWithSessionID = response.encodeRedirectURL(aDestinationPage.toString());
+			response.sendRedirect( urlWithSessionID );
+			}
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -113,10 +117,10 @@ public class CreateNewTree extends HttpServlet {
 	 * Insert the contributors
 	 * @param request
 	 */
-	private void enterContributors(HttpServletRequest request,HttpServletResponse response,String projectID,String userId) {
+	private String checkContributors(HttpServletRequest request,String userId) {
+			String updateSuccess="";
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			
 			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
 //			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
 		for(int i=1;i<=8;i++){
@@ -124,18 +128,12 @@ public class CreateNewTree extends HttpServlet {
 			String name= request.getParameter(paramName);
 			if(name.length() > 0 || !name.isEmpty()){
 				//check if the name exists in the DB and get the personID
-				java.sql.PreparedStatement stat2 = con.prepareStatement("Select PersonID from Person where Username='"+name.toLowerCase()+ "'");
+				java.sql.PreparedStatement stat2 = con.prepareStatement("Select PersonID from Person where Username='"+name.toLowerCase()+ "' OR Email='"+name+"'");
 				ResultSet result= stat2.executeQuery();
-				result.first();
-				if(result.getInt(1) != 0 ){
-				java.sql.PreparedStatement stat = con.prepareStatement("INSERT INTO PersonTreeCon VALUES ("+ projectID+","+ result.getInt(1)+ ")");
-				stat.executeUpdate();
-				}else{
-					request.setAttribute("nonExistantPerson", "true");
-					RequestDispatcher dispatcher = request.getRequestDispatcher("landingPage.jsp");
-					dispatcher.forward(request, response);
+				if(!result.next()){
+					updateSuccess=name;
+					break;
 				}
-				
 			}
 		}
 		//java.sql.PreparedStatement stat2 = con.prepareStatement("INSERT INTO PersonTreeCon VALUES ("+ projectID+","+ userId+ ")");
@@ -149,14 +147,46 @@ public class CreateNewTree extends HttpServlet {
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (ServletException e) {
+			}
+		
+			return updateSuccess;
+
+}
+	
+	/**
+	 * Insert the contributors
+	 * @param request
+	 */
+	private void enterContributors(HttpServletRequest request,String projectID,String userId) {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
+//			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
+		for(int i=1;i<=8;i++){
+			String paramName= "person"+i;
+			String name= request.getParameter(paramName);
+			if(name.length() > 0 || !name.isEmpty()){
+				//check if the name exists in the DB and get the personID
+				java.sql.PreparedStatement stat2 = con.prepareStatement("Select PersonID from Person where Username='"+name.toLowerCase()+ "' OR Email='"+name+"'");
+				ResultSet result= stat2.executeQuery();
+				while(result.next()){
+					java.sql.PreparedStatement stat = con.prepareStatement("INSERT INTO PersonTreeCon VALUES ("+ projectID+","+ result.getInt(1)+ ")");
+					stat.executeUpdate();
+				}
+			}
+		}
+		//java.sql.PreparedStatement stat2 = con.prepareStatement("INSERT INTO PersonTreeCon VALUES ("+ projectID+","+ userId+ ")");
+		//stat2.executeUpdate();
+		con.close();
+		
+		}catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (IOException e) {
+			
+			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		
 		
 	}
 

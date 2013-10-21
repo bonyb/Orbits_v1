@@ -31,18 +31,18 @@
 <%@include file="header.jsp" %>
 <%String username= session.getAttribute("username").toString(); %>
 
-<%	
-if(null!=request.getAttribute("nonExistantPerson")){%>
-	<div class="errorWrapper">  <%=request.getAttribute("nonExistantPerson").toString() %> does not exist</div>
-<%
-}
-%>
 <div id="project_field" style="position:absolute;left:0%;top:0%;height:100%;width:100%">
 <img src="images/ui-orbits-background-v1.png" style="width:90%;height:auto;position:absolute;z-index:-2;"/>
 
 <div class="new_project_node octagonRed">
 <img src="images/shadow-node.png" style="width:100%;height:243%;position:absolute;top:-71%;left:0%;"/>
 	<div class="new_project_form">
+<%	
+if(null!=request.getAttribute("nonExistantPerson")){%>
+	<div class="errorWrapper">  <%=request.getAttribute("nonExistantPerson").toString() %> does not exist</div>
+<%
+}
+%>
 		<form action="CreateNewTree" method="POST">
 			<div class="new_project_title">
 				<input class="input-block-level add_project_title" type="text" name="title" placeholder="Title" maxlength="25">
