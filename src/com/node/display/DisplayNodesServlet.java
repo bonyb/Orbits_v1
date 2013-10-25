@@ -74,7 +74,7 @@ public class DisplayNodesServlet extends HttpServlet {
 				HashMap<String,List<String>> nodemap=displayResults(personID,projectId);
 				if(!nodemap.isEmpty()){
 				setAttributes(personID, nodemap, request,
-						response,projectId,selectedNodeId,maxLevel(projectId));
+						response,projectId,selectedNodeId,noofContributors(projectId),contributorsList(projectId));
 				}else{
 					// no projects 
 					RequestDispatcher dispatcher = request.getRequestDispatcher("main.jsp");
@@ -105,7 +105,7 @@ public class DisplayNodesServlet extends HttpServlet {
 					HashMap<String, List> hashMap = new HashMap<String, List>();
 					try {
 						setAttributes(personID, displayResults(personID,projectId),
-								request, response,projectId,selectedNodeId,maxLevel(projectId));
+								request, response,projectId,selectedNodeId,noofContributors(projectId),contributorsList(projectId));
 
 					} catch (ClassNotFoundException e) {
 						// TODO Auto-generated catch block
@@ -151,19 +151,19 @@ public class DisplayNodesServlet extends HttpServlet {
 	 * @param projectId
 	 * @return
 	 */
-	int maxLevel(String projectId){
+	int noofContributors(String projectId){
 		int level=0;
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-		
 		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
 //		Connection con =DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
 		java.sql.PreparedStatement stat = con
-				.prepareStatement("select MAX(Levelno) from Node where ProjectId='"+ projectId + "'");
+				.prepareStatement("select COUNT(*) from PersonTreeCon where ProjectID='"+ projectId + "'");
 		ResultSet result = stat.executeQuery();
-		result.first();
-		level=result.getInt(1);
-		
+		while(result.next()){
+			level=result.getInt(1);
+		}
+		stat.close();
 		con.close();
 		return level;
 		} catch (ClassNotFoundException e) {
@@ -174,6 +174,41 @@ public class DisplayNodesServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 		return level;
+	}
+	
+	/**
+	 * return the list of contributors
+	 * @param projectId
+	 * @return
+	 */
+	String contributorsList(String projectId){
+		String names="";
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
+//		Connection con =DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
+		java.sql.PreparedStatement stat = con
+				.prepareStatement("select PersonID from PersonTreeCon where ProjectID='"+ projectId + "'");
+		ResultSet result = stat.executeQuery();
+		while(result.next()){
+			String personID=result.getString(1);
+			java.sql.PreparedStatement stat1 = con.prepareStatement("select * from Person where PersonID='"+ personID + "'");
+			ResultSet personDet = stat1.executeQuery();
+			personDet.first();
+			String pname=personDet.getString("FirstName")+" "+personDet.getString("LastName")+",";
+			names=names.concat(pname);
+			stat1.close();
+		}
+		stat.close();
+		con.close();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return names;
 	}
 
 	HashMap<String, List<String>> displayResults(int personId,String projectId)
@@ -419,7 +454,7 @@ public class DisplayNodesServlet extends HttpServlet {
 		}
 
 	void setAttributes(int personID, HashMap<String, List<String>> result,
-			HttpServletRequest request, HttpServletResponse response,String projectId,String selectedNodeId, int maxLevel)
+			HttpServletRequest request, HttpServletResponse response,String projectId,String selectedNodeId, int noofContributors,String contributorsList)
 			throws ServletException, IOException, ClassNotFoundException,
 			SQLException {
 		// find number of parents
@@ -593,6 +628,8 @@ public class DisplayNodesServlet extends HttpServlet {
 		}
 			con.close();
 		}
+		request.setAttribute("c", noofContributors);
+		request.setAttribute("conList", contributorsList);
 		RequestDispatcher dispatcher = request.getRequestDispatcher("main.jsp?projectId="+projectId+"&selectedNodeId="+selectedNodeId);
 		dispatcher.forward(request, response);
 	}

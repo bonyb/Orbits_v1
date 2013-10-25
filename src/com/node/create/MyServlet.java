@@ -102,6 +102,7 @@ public class MyServlet extends HttpServlet {
 	int insertvalues(String title, String parentId, String description,
 			String userId,String projectId) throws ClassNotFoundException, SQLException,
 			ParseException {
+		int nodeId=0;
 		Class.forName("com.mysql.jdbc.Driver");
 		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
 //		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
@@ -122,11 +123,7 @@ public class MyServlet extends HttpServlet {
 
 		levelNo++;
 		countChildren++;
-		// to update the countchildren of parent node
-		java.sql.PreparedStatement stat1 = con
-				.prepareStatement("UPDATE Node SET countChildren="
-						+ countChildren + " Where NodeID='" + parentId + "'");
-		stat1.executeUpdate();
+	
 		String dt = utility.getCuttentDateTime();
 		String[] escapetexts = utility.setEcsapeTitleDesc(title, description);
 		java.sql.PreparedStatement stat2 = con
@@ -141,15 +138,22 @@ public class MyServlet extends HttpServlet {
 						+ ","
 						+ levelNo
 						+ ",0,0,0,'" + dt + "',"+projectId+");");
-		stat2.executeUpdate();
-		// get the node id
-		java.sql.PreparedStatement stat3 = con
-				.prepareStatement("select NodeID from Node where title='"
-						+ escapetexts[0] + "' and Description='"
-						+ escapetexts[1] + "' and AuthorID="+authorId+" order by CreationTimeDate DESC");
-		ResultSet result1 = stat3.executeQuery();
-		result1.first();
-		int nodeId = result1.getInt(1);
+		if(stat2.executeUpdate()!=0){
+			// to update the countchildren of parent node
+			java.sql.PreparedStatement stat1 = con
+					.prepareStatement("UPDATE Node SET countChildren="
+							+ countChildren + " Where NodeID='" + parentId + "'");
+			stat1.executeUpdate();
+			// get the node id
+			java.sql.PreparedStatement stat3 = con
+					.prepareStatement("select NodeID from Node where title='"
+							+ escapetexts[0] + "' and Description='"
+							+ escapetexts[1] + "' and AuthorID="+authorId+" order by CreationTimeDate DESC");
+			ResultSet result1 = stat3.executeQuery();
+			result1.first();
+			nodeId = result1.getInt(1);
+		}
+		
 		
 		con.close();
 		return nodeId;

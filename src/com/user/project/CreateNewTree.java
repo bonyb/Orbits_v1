@@ -68,7 +68,7 @@ public class CreateNewTree extends HttpServlet {
 			Class.forName("com.mysql.jdbc.Driver");
 			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
 //			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
-			String contributorNotExistant=checkContributors(request,userId);
+			String contributorNotExistant=checkContributors(request,7);
 			if(!contributorNotExistant.isEmpty()){
 				request.setAttribute("nonExistantPerson", contributorNotExistant);
 				RequestDispatcher dispatcher = request.getRequestDispatcher("AuthAndDisplayProjects");
@@ -88,7 +88,7 @@ public class CreateNewTree extends HttpServlet {
 			stat3.executeUpdate();
 			
 			//add the contributors to the project
-			enterContributors(request, projectID, userId);
+			enterContributors(request, projectID,7);
 			
 			//get the nodeId that just got created
 			java.sql.PreparedStatement stat4 = con.prepareStatement("Select NodeID from Node where ProjectId="+ projectID);
@@ -117,13 +117,13 @@ public class CreateNewTree extends HttpServlet {
 	 * Insert the contributors
 	 * @param request
 	 */
-	private String checkContributors(HttpServletRequest request,String userId) {
+	public String checkContributors(HttpServletRequest request, Integer noOfCon) {
 			String updateSuccess="";
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
 //			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
-		for(int i=1;i<=8;i++){
+		for(int i=1;i<=noOfCon;i++){
 			String paramName= "person"+i;
 			String name= request.getParameter(paramName);
 			if(name.length() > 0 || !name.isEmpty()){
@@ -157,12 +157,12 @@ public class CreateNewTree extends HttpServlet {
 	 * Insert the contributors
 	 * @param request
 	 */
-	private void enterContributors(HttpServletRequest request,String projectID,String userId) {
+	public void enterContributors(HttpServletRequest request,String projectID, Integer noOfCon) {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
 //			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
-		for(int i=1;i<=8;i++){
+		for(int i=1;i<=noOfCon;i++){
 			String paramName= "person"+i;
 			String name= request.getParameter(paramName);
 			if(name.length() > 0 || !name.isEmpty()){

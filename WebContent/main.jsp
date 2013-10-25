@@ -6,14 +6,17 @@
 <%@page import="java.util.ArrayList"%>
 <%@page import="javax.script.*"%>
 <%@page import="java.util.Random"%>
+<%@page import="java.lang.Math"%>
+<%@page import="java.text.*"%>
+
+
 <%@page import="java.awt.Color"%>
 <%@page import="java.util.Enumeration"%>
 <%@page import="org.apache.cxf.jaxrs.impl.MetadataMap"%>
 <%@page import="javax.ws.rs.core.MultivaluedMap"%>
 <%@page import="sun.misc.Cache"%>
 
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-	pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 <%@  taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql"%>
@@ -56,6 +59,10 @@ input#chat {
 <script type="text/javascript" src="js/lib/jquery-1.8.1-min.js"></script>
 <script type="text/javascript" src="js/lib/jquery-ui-1.8.23-min.js"></script>
 <script type="text/javascript" src="js/lib/jquery.ui.touch-punch.min.js"></script>
+<script type="text/javascript" src="js/tinymce/tinymce.min.js"></script>
+<script type="text/javascript" src="js/tinymce/jquery.tinymce.min.js"></script>
+<!-- <script type="text/javascript" src="//tinymce.cachefly.net/4.0/tinymce.min.js"></script> -->
+<script type="text/javascript" src="js/jquery.knob.js"></script>
 
 <!-- Plug ins -->
 <script type="text/javascript" src="scripts/jquery-mousewheel.js"></script>
@@ -69,6 +76,17 @@ input#chat {
 <script type="text/javascript" src="scripts/new_node.js"></script>
 
 <script type="text/javascript">
+
+	tinymce.init({
+    	selector: "textarea.node_description",
+    	toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | forecolor backcolor emoticons"
+	});
+	
+	$(function() {
+	    $(".vote_dial").knob({
+	    });
+	});
+
 	$(document).ready(function(){
 	var Chat = {};
 	var dURL = document.URL;
@@ -178,6 +196,8 @@ input#chat {
 				String username = session.getAttribute("username").toString();
 				String projectId = request.getParameter("projectId");
 				String selectedNodeId = request.getParameter("selectedNodeId");
+				String conList=request.getAttribute("conList").toString();
+				int contributors = 7-Integer.parseInt(request.getAttribute("c").toString());
 				String userID = session.getAttribute("userID").toString();
 				pageContext.setAttribute("userID",userID);
 				int i = 0;
@@ -222,21 +242,18 @@ input#chat {
 								// 	     						parray[pcounter]= Integer.parseInt(value.get(2).toString());
 
 								position = Integer.parseInt(key);
-								pageContext.setAttribute("nodelistSize",
-										value.size());
+								pageContext.setAttribute("nodelistSize", value.size());
 
 								//color test
 								Color parentColor = Color.darkGray;
 								colorMap.put(key, parentColor);
 								if (Integer.parseInt(value.get(3).toString()) == 2) {
 									colorValue += 0.2f;
-									parentColor = new Color(Color.HSBtoRGB(
-											colorValue, 1, 0.5f));
+									parentColor = new Color(Color.HSBtoRGB(colorValue, 1, 0.5f));
 									colorMap.put(key, parentColor);
 									//out.println("color-"+parentColor.getRed());
 									//out.println("color br-"+parentColor.getRGB());
-								} else if (Integer
-										.parseInt(value.get(3).toString()) > 2) {
+								} else if (Integer.parseInt(value.get(3).toString()) > 2) {
 									Color c = colorMap.get(value.get(2).toString());
 									parentColor = c.brighter();
 									colorMap.put(key, parentColor);
@@ -246,6 +263,7 @@ input#chat {
 				<!-- Old Node -->
 				<%
 				double radius = 2;
+				DecimalFormat twoDigit = new DecimalFormat("#,##0");//formats to 2 decimal places
 				double uv = Integer.parseInt(value.get(7).toString()) + 1;
 				double dv = Integer.parseInt(value.get(8).toString()) + 1;
 				double inc = ((uv - dv) / dv) * 0.6;
@@ -266,28 +284,28 @@ input#chat {
 					<div class="ep"></div>
 
 					<div class="node_color" style="display: none">
-						#<%=parentColor.getRed()%><%=parentColor.getGreen()%><%=parentColor.getBlue()%></div>
-
-					<a href="#" class="addnodemap_btn" id="addnodemap_<%=key%>"
-						onclick="addNode(<%=key%>)"><img
-						src="images/icons/addbutton-onmap-v2.png" alt="Add Node" /> </a>
-
+						#<%=parentColor.getRed()%><%=parentColor.getGreen()%><%=parentColor.getBlue()%>
+					</div>
+					
+					<%radius*=15;%>
+<%-- 				<div style="position:absolute;left:100px"><%=twoDigit.format(radius)%></div> --%>
+					<div style="position:absolute;left:-2px;top:-2px"><input type="text" value="75" data-thickness=".2" data-fgColor="#AAAAAA" data-bgColor="#E1E1E1" class="vote_dial" data-readOnly="true" data-displayInput="false" data-height="<%=twoDigit.format(radius)%>" data-width="<%=twoDigit.format(radius)%>"></div>
+					
+					<a href="#" class="addnodemap_btn" id="addnodemap_<%=key%>" onclick="addNode(<%=key%>)"><img src="images/icons/addbutton-onmap-v2.png" alt="Add Node" /> </a>
 
 				</div>
 				<%} else {%>
-				<div class="w" id="<%=key%>" onclick="cancelEdit(<%=key%>)"
-					style="left:<%=((i * x_padding)) + x_position%>em; top:<%=(node_height * y_padding)
-										+ y_position%>em;width: <%=radius%>em;height: <%=radius%>em; background-color: rgb(<%=parentColor.getRed()%>, <%=parentColor.getGreen()%>, <%=parentColor.getBlue()%>);">
+				<div class="w circle" id="<%=key%>" onclick="cancelEdit(<%=key%>)"
+					style="left:<%=((i * x_padding)) + x_position%>em; top:<%=(node_height * y_padding) + y_position%>em;width: <%=radius%>em;height: <%=radius%>em; background-color: rgb(<%=parentColor.getRed()%>, <%=parentColor.getGreen()%>, <%=parentColor.getBlue()%>);">
 					<div class="node_map_title"><%=value.get(0)%></div>
 					<div class="notification_flag">!</div>
 					<div class="ep"></div>
+ 
+					<div class="node_color" style="display: none;">#<%=parentColor.getRed()%><%=parentColor.getGreen()%><%=parentColor.getBlue()%></div>
 
-					<div class="node_color" style="display: none;">
-						#<%=parentColor.getRed()%><%=parentColor.getGreen()%><%=parentColor.getBlue()%></div>
+					<div style="position:absolute;left:-2px;top:-2px"><input type="text" value="75" data-thickness=".2" data-fgColor="#AAAAAA" data-bgColor="#E1E1E1" class="vote_dial" data-readOnly="true" data-displayInput="false" data-height="<%=twoDigit.format(radius)%>" data-width="<%=twoDigit.format(radius)%>"></div>
 
-					<a href="#" class="addnodemap_btn" id="addnodemap_<%=key%>"
-						onclick="addNode(<%=key%>)"><img
-						src="images/icons/addbutton-onmap-v2.png" alt="Add Node" /> </a>
+					<a href="#" class="addnodemap_btn" id="addnodemap_<%=key%>"onclick="addNode(<%=key%>)"><img src="images/icons/addbutton-onmap-v2.png" alt="Add Node" /> </a>
 
 				</div>
 				<%}%>
@@ -325,8 +343,27 @@ input#chat {
 			%>
 
 			</div>
+			<!-- Add people to project -->
+			Contributors: <%=conList %>
+			<div style="margin-bottom:20px;" class="addUsers_form">
+			<% if(contributors > 0) {%>
+			<%	if(null!=request.getAttribute("nonExistantPerson")){%>
+				<div class="errorWrapper">  <%=request.getAttribute("nonExistantPerson").toString() %> does not exist</div><%}%>
+				You can add <%=contributors %> more contributors to the project:
+					<form action="AddContributorsServlet" method="post">
+					<c:forEach var="con" begin="1" end="<%=contributors %>">
+					
+					<input class="contributorTitle" type="text" name="person${con}" placeholder="Username or Email" maxlength="25">					
+					</c:forEach>
+					<input type="hidden" value="<%=projectId%>" name="projectId" /> 
+					<input type="hidden" value="<%=contributors%>" name="contributorNumber" /> 
+					<input style="float:left;" type="image" src="images/icons/add-buttn-test1.png" alt="Submit"  align="right" width="48" height="20">
+					</form>
+					<%} %>
+					</div>
 		</div>
 		<!-- 		<div id="scroll_controller"></div>	 -->
+		
 		<div id="content_field">
 
 			<%
@@ -354,59 +391,55 @@ input#chat {
 							List value = (List) entry.getValue();
 							//put it in an array
 							pcounter++;
-							// 							parray[pcounter] = Integer.parseInt(value.get(2).toString());
+							// parray[pcounter] = Integer.parseInt(value.get(2).toString());
 							position = Integer.parseInt(key);
-							pageContext.setAttribute("nodelistSize",
-									value.size());
+							pageContext.setAttribute("nodelistSize", value.size());
 							//to set the user's vote
-							pageContext.setAttribute("vote",
-									value.get(15));
-							pageContext.setAttribute("author",
-									value.get(6).toString());
+							pageContext.setAttribute("vote",value.get(15));
+							pageContext.setAttribute("author", value.get(6).toString());
 
 		%>
 			<!-- Old Node -->
 			<div class="node_info" id="des_<%=key%>">
 
-				<%
-				// if (parray[pcounter] != parray[pcounter - 1]) { System.out.println("a line is here");}
-					pageContext.setAttribute("nodeno", key);
-			%>
+				<% pageContext.setAttribute("nodeno", key);%>
 
-				<!-- 			<div> -->
 				<c:set var="nodename" value="nodeno_${nodeno}"></c:set>
 				<c:set var="imgnodename" value="imgno_${nodeno}"></c:set>
-				<%-- 				<div class="node" id="container_<%=i%>"> --%>
 				<div class="node_titlebar" id="title_bar_<%=key%>">
 
-					<img style="cursor: pointer;" class="text_icon"
-						id="text_icon_<%=key%>" src="images/icons/edit-test1.png"
-						onclick="editNode(<%=key%>);" />
-
 					<!-- Display title -->
-					<div class="node_title display_title" id="title_<%=key%>"><%=value.get(0)%></div>
-					<!-- To edit title -->
-					<input class="editTitle" type="text" name="title"
-						style="display: none;" value="<%=value.get(0)%>"
-						form="editForm_<%=key%>" maxlength="25">
-
-					<%--<img class="mark_icon" id="mark_icon_<%=key%>" src="images/icons/mark_icon.png" /> --%>
-
-					
+					<c:choose>
+						<c:when test="${userID == author}">		
+							<div class="node_title display_title" id="title_<%=key%>"><div class="title_content" onclick="editNode(<%=key%>);"><%=value.get(0)%></div></div>
+							<!-- To edit title -->
+							<input class="editTitle" type="text" name="title" style="display: none;" value="<%=value.get(0)%>" form="editForm_<%=key%>" maxlength="25">
+						</c:when>
+						<c:otherwise>
+							<div class="node_title display_title" id="title_<%=key%>"><div class="title_content"><%=value.get(0)%></div></div>
+						</c:otherwise>
+					</c:choose>
+						
 					<!-- Comment submit section -->
 					<img style="cursor: pointer;" class="comment_icon" id="comment_icon_<%=key%>" src="images/icons/comment-v2-3.png" onclick="submitComment(<%=key%>);" />
 					
 					<!-- Delete node section -->
 					<c:if test="${userID == author}">
-					<div class="delete_form">
-					<form action="DeleteNodeServlet" method="post">
-							<input type="hidden" value='${nodeno}' name="nodeID" /> <input
-								type="hidden" value="<%=projectId%>" name="projectId" /> <input
-								type="image" src="images/icons/delete_icon.png" alt="Submit"
-								id="delete_<%=key%>" align="right" width="48" height="20">
-							</form>
-					</div>
+						<%if(Integer.parseInt(value.get(4).toString())==0){%>
+							<div class="delete_form">
+								<form action="DeleteNodeServlet" method="post">
+									<input type="hidden" value='${nodeno}' name="nodeID" /> 
+									<input type="hidden" value="<%=projectId%>" name="projectId" /> 
+									<input type="image" src="images/icons/delete_icon.png" alt="Submit" id="delete_<%=key%>" align="right" width="48" height="20">
+								</form>
+							</div>
+						<%}else{%>
+							<div class="delete_form">
+								<img src="images/icons/delete_icon.png" class="delete_icon" style="width:20px;height:20px">
+							</div>
+						<%}%>
 					</c:if>
+					
 					<!-- Different Votes -->
 					<div class="priority_btn">
 						<form action="ImportanceVoteServlet" method="post">
@@ -419,52 +452,56 @@ input#chat {
 							<%=value.get(13) %><input type="image" src="images/icons/star_half.png" alt="Submit" id="up_btn_3_<%=key%>" align="right"width="48" height="20" onClick="setVoteId('3')">
 							<%=value.get(14) %><input type="image" src="images/icons/star.png" alt="Submit" id="up_btn_4_<%=key%>" align="right"width="48" height="20" onClick="setVoteId('4')">
 							</form> 
-							<div id="vote_<%=key%>" style="display:none"><%=value.get(15)%></div>
+						<div id="vote_<%=key%>" style="display:none"><%=value.get(15)%></div>
 					</div>
 
 					<div class="voting_form up_vote_btn">
 						<form action="UpvoteServlet" method="post">
-							<input type="hidden" value='${nodeno}' name="nodeID" /> <input
-								type="hidden" value="<%=projectId%>" name="projectId" /> <input
-								type="image" src="images/icons/like-test1.png" alt="Submit"
-								id="up_btn_<%=key%>" align="right" width="48" height="20">
-							<%=value.get(7)%></form>
+							<input type="hidden" value='${nodeno}' name="nodeID" /> 
+							<input type="hidden" value="<%=projectId%>" name="projectId" /> 
+							<input type="image" src="images/icons/like-test1.png" alt="Submit" id="up_btn_<%=key%>" align="right" width="48" height="20">
+							<%=value.get(7)%>
+						</form>
 					</div>
 
 					<div class="voting_form down_vote_btn">
 						<form action="DownvoteServlet" method="post">
-							<input type="hidden" value='${nodeno}' name="nodeID" /> <input
-								type="hidden" value="<%=projectId%>" name="projectId" /> <input
-								type="image" src="images/icons/dislike-test1.png" alt="Submit"
-								id="down_btn_<%=key%>" align="right" width="48" height="20">
-							<%=value.get(8)%></form>
+							<input type="hidden" value='${nodeno}' name="nodeID" /> 
+							<input type="hidden" value="<%=projectId%>" name="projectId" /> 
+							<input type="image" src="images/icons/dislike-test1.png" alt="Submit" id="down_btn_<%=key%>" align="right" width="48" height="20">
+							<%=value.get(8)%>
+						</form>
 					</div>
-
-
 					<div class="author_name"><%=value.get(5)%></div>
 					<div class="creation_date"><%=value.get(9)%></div>
-
-
 				</div>
 
+				<!-- Node Content -->
+				<div class="node_content">
+				
+					<c:choose>
+						<c:when test="${userID == author}">		
+							<form action="EditServlet" method="post" id="editForm_<%=key%>">				
+							<!-- Rich Text Field -->
+						<textarea class="node_description" name="description" rows="4" cols="50" maxlength="10000" form="editForm_<%=key%>">
+							<%if (value.get(1) != null) {%>
+								<%=value.get(1)%>
+							<%}%>
+						</textarea>
+						<input type="hidden" value='${nodeno}' name="nodeID" /> 
+						<input type="hidden" value="<%=projectId%>" name="projectId" /> 
+						<input type="image" src="images/icons/submit-test1.png" alt="Submit" class="save_content" width="48" height="39">
+					</form>
+						</c:when>
+						<c:otherwise>
+							<!-- Display Content of Other Users -->
+							<%if (value.get(1) != null) {%>
+								<div class="node_description_otheruser"><%=value.get(1)%></div>
+							<%}%>
+						</c:otherwise>
+						</c:choose>
+				</div> <!-- Node Content End -->
 
-				<!-- Display Description -->
-				<div class=node_content>
-				<%
-							if (value.get(1) != null) {
-						%>
-				<div class="node_description" id="node_description_<%=key%>"><%=value.get(1)%></div>
-				<%
- 	}
- %>
-
-				<!-- Edit Description -->
-				<textarea class="editDesc" rows="4" cols="50" maxlength="1000" name="description" style="display: none;" form="editForm_<%=key%>">
-					<%if (value.get(1) != null) {
-						%><%=value.get(1)%>
-					<%	}
-						%>
-				</textarea>
 				<div class="node_content_under_bar">
 				<!-- Up Votes -->
 				<% int length=value.get(16).toString().length()-1;
@@ -475,7 +512,7 @@ input#chat {
 							//more than one person s vote
 							String[] upList=upVoteList.split("#");
 							for(int u=0;u<upList.length;u++){
-
+							
 								String uname=upList[u].substring(0,upList[u].indexOf('.'));
 								String unumber=upList[u].substring(upList[u].indexOf('.')+1);
 								out.println(uname);
@@ -490,7 +527,7 @@ input#chat {
 						}
 				}
 				%>
-
+				
 				<!-- DownVotes -->
 				<% int dlength=value.get(17).toString().length()-1;
 					if(dlength>6){
@@ -500,7 +537,7 @@ input#chat {
 							//more than one person s vote
 							String[] upList=upVoteList.split("#");
 							for(int u=0;u<upList.length;u++){
-
+							
 								String uname=upList[u].substring(0,upList[u].indexOf('.'));
 								String unumber=upList[u].substring(upList[u].indexOf('.')+1);
 								out.println(uname);
@@ -523,99 +560,58 @@ input#chat {
 
 							<%
 								for (int tagno = 19; tagno <= value.size(); tagno++) {%><div class="node_tag"><%
-
+									
 														out.println(value.get(tagno - 1));
-
-								%></div><%
-													}
-							%>
-
+								
+								%></div>
+							<%}%>
+							
 						</c:if>
 
 					</div>
+				</div> <!-- node_content_under_bar end -->
 
-					<!-- To edit! -->
-					<div class="editNode" id="editNodeDiv_<%=key%>"
-						style="display: none">
-						<form action="EditServlet" method="post" id="editForm_<%=key%>">
-							<input type="hidden" value='${nodeno}' name="nodeID" /> <input
-								type="hidden" value="<%=projectId%>" name="projectId" /> <input
-								type="image" src="images/icons/submit-test1.png" alt="Submit"
-								align="left" width="48" height="39">
-						</form>
-						<a href="#" class="edit_node_cancel" id="cancelEdit_<%=key%>"
-							onclick="cancelEdit(<%=key%>)"><img
-							src="images/icons/cancel-test1.png" alt="Cancel Edit" /> </a>
-
-
+				<div class="new_node_form" id="new_node_form_<%=key%>">
+					<form action="MyServlet" method="POST">
+					<div class="new_node_form_title_bar">
+						<div class="add_node_title">
+							<input class="input_title" type="text" name="title" placeholder="Title" maxlength="35">
+						</div>
+						<div class="author_name"><%=username%></div>
+						<div class="creation_date"><%=value.get(9)%></div>
 					</div>
-
-				</div>
-				<!-- 				</div> -->
-				<!-- 			</div> -->
-
-<!-- 				<div class="add_icon" style="cursor: pointer;"> -->
-<%-- 					<img class="new_btn" id="new_btn_<%=key%>" --%>
-<!-- 						src="images/icons/add-buttn-test1.png" /> -->
-<!-- 				</div> -->
-
-
-					<div class="new_node_form" id="new_node_form_<%=key%>">
-					<div class="add_node_title">
-						<form action="MyServlet" method="POST">
-							<input class="input_title" type="text" name="title"
-								placeholder="Title" maxlength="25">
+					<div class="new_node_form_content">
+						<textarea class="node_description" rows="4" cols="50" maxlength="10000" name="description"></textarea>
+						<input type="hidden" value='${nodeno}' name="parentId" /> 
+						<input type="hidden" value="<%=projectId%>" name="projectId" /> <br>
 					</div>
-					<div class="author_name"><%=username%></div>
-					<div class="creation_date"><%=value.get(9)%></div>
-					<div class="text_edit_bar"></div>
-					<textarea class="node_description_input" rows="4" cols="50"
-						maxlength="1000" name="description"></textarea>
-					<input type="hidden" value='${nodeno}' name="parentId" /> <input
-						type="hidden" value="<%=projectId%>" name="projectId" /> <br>
-
 					<div class="new_node_under_bar">
 						<div class="tagSection">
-
-							<img class="tags_icon" id="tag_icon_<%=key%>"
-								src="images/icons/tag_icon.png" /> <input
-								class="node_tag_input node_tag1" type="text" name="tag1">
+							<img class="tags_icon" id="tag_icon_<%=key%>" src="images/icons/tag_icon.png" /> 
+							<input class="node_tag_input node_tag1" type="text" name="tag1">
 							<input class="node_tag_input node_tag2" type="text" name="tag2">
 							<input class="node_tag_input node_tag3" type="text" name="tag3">
-							<a href="#" class="new_tag"><img class="new_tag_img"
-								id="new_tag_<%=key%>" src="images/icons/add-buttn-test1.png" />
-							</a>
+							<a href="#" class="new_tag"><img class="new_tag_img" id="new_tag_<%=key%>" src="images/icons/add-buttn-test1.png" /></a>
 						</div>
-
-
-						<input class="new_node_submit_btn" type="image"
-							src="images/icons/submit-test1.png" alt="Submit" width="48"
-							height="39"> <a href="#" class="new_node_cancel_btn"
-							id="cancel_<%=key%>" onclick="cancelAdd(<%=key%>)"><img
-							src="images/icons/cancel-test1.png" alt="Cancel Add" /> </a>
+							<input class="new_node_submit_btn" type="image" src="images/icons/submit-test1.png" alt="Submit" width="48" height="39"> 
+							<a href="#" class="new_node_cancel_btn" id="cancel_<%=key%>" onclick="cancelAdd(<%=key%>)">
+							<img src="images/icons/cancel-test1.png" alt="Cancel Add" /> </a>
 					</div>
-					<!-- <div>cancel button onclick='$(this).parent().parent().hide();'</div> -->
 					</form>
-				</div>
+				</div> <!-- new_node_form end -->
 
 				<div class="discussion_thread" id="discussion_thread_<%=key%>">
 					<div class="node_comments" id="node_comments_<%=key%>">
-						<%
-						MultivaluedMap<String, List<String>> comments = new MetadataMap<String, List<String>>();
-										comments = (MultivaluedMap<String, List<String>>) request
-												.getAttribute("comments");
-										if (null != comments && !comments.isEmpty()) {
-											if (comments.containsKey(key)) {
-												// if the particular node has comments, iterating over the list of comments
-												Iterator listIt = comments.get(key)
-														.iterator();
-												while (listIt.hasNext()) {
-													List<String> commentSection = (List<String>) listIt
-															.next();
-													Iterator commentDetIt = commentSection
-															.iterator();
-													//showing the comment/author/date
-					%>
+						<%MultivaluedMap<String, List<String>> comments = new MetadataMap<String, List<String>>();
+						comments = (MultivaluedMap<String, List<String>>) request.getAttribute("comments");
+						if (null != comments && !comments.isEmpty()) {
+							if (comments.containsKey(key)) {
+							// if the particular node has comments, iterating over the list of comments
+								Iterator listIt = comments.get(key).iterator();
+								while (listIt.hasNext()) {
+									List<String> commentSection = (List<String>) listIt.next();
+									Iterator commentDetIt = commentSection.iterator();
+													//showing the comment/author/date %>
 						<div class="comment_box">
 							<div class="comment_title">
 								<div class="comment_author">
@@ -629,149 +625,62 @@ input#chat {
 								<%=commentSection.get(0)%>
 							</div>
 						</div>
-						<%
-								}
-													}
-
-												}
-							%>
+								<%}
+							} 
+						}%>
 					</div>
-
 					<!-- To comment- the form! -->
-					<div class="commentSection" id="commentDiv_<%=key%>"
-						style="display: none">
-						<form action="CommentServlet" method="post"
-							id="commentForm_<%=key%>" class="comment_form">
-							<textarea id="comment_<%=key%>" class="commentSection" rows="4"
-								cols="50" maxlength="250" name="comment"
-								form="commentForm_<%=key%>"></textarea>
-							<input type="hidden" value='${nodeno}' name="nodeID" /> <input
-								type="hidden" value="<%=projectId%>" name="projectId" /> <input
-								type="image" class="comment_submit_btn"
-								src="images/icons/submit-test1.png" alt="Submit" width="48"
-								height="39" /> <a href="#" class="comment_cancel_btn"
-								id="cancelEdit_<%=key%>" onclick="cancelComment(<%=key%>)"><img
-								src="images/icons/cancel-test1.png" alt="Cancel Comment" /> </a>
+					<div class="commentSection" id="commentDiv_<%=key%>"style="display: none">
+						<form action="CommentServlet" method="post" id="commentForm_<%=key%>" class="comment_form">
+							<textarea id="comment_<%=key%>" class="commentSection" rows="4" cols="50" maxlength="250" name="comment" form="commentForm_<%=key%>"></textarea>
+							<input type="hidden" value='${nodeno}' name="nodeID" /> 
+							<input type="hidden" value="<%=projectId%>" name="projectId" /> 
+							<input type="image" class="comment_submit_btn" src="images/icons/submit-test1.png" alt="Submit" width="48" height="39" /> <a href="#" class="comment_cancel_btn" id="cancelEdit_<%=key%>" onclick="cancelComment(<%=key%>)"><img src="images/icons/cancel-test1.png" alt="Cancel Comment" /> </a>
 						</form>
 					</div>
-				</div>
-				</div>
-			</div>
-
-			<%
-				}
-					}
-					i++;
-					att = "node" + i;
-				}
-		%>
-
+				</div> <!-- Discussion Thread End -->
+				
+			</div> <!-- Node Info End -->
+		
+							<%}
+						}
+						i++;
+						att = "node" + i;
+					}%>
+		
 		<%}%>
+		</div> <!-- Content Field End -->
+		
+	</div> <!-- Main Container End -->
+		
 
-
+	<div style="width: 50px; position: fixed; left: 0%; top: 0%;">
+		<p>
+			<input type="text" placeholder="type and press enter to chat" id="chat">
+		</p>
+		<div id="console-container">
+			<div id="console"></div>
 		</div>
-		<!-- #content_field end-->
-
-		<!-- New Node Forn Start -->
-		<%
-	i = 0;
-
-	att = "node" + i;
-	attr = request.getAttributeNames();
-	/*do{System.out.println("Bloody fuck1-"+attr.nextElement());}while(attr.hasMoreElements());*/
-	while (attr.hasMoreElements()) { //System.out.println("Bloody fuck1-"+attr.nextElement());
-
-		int node_height = 1;
-		if (attr.nextElement().toString().startsWith("node")) {
-			Map<String, List> hashmap = new HashMap<String, List>();
-			hashmap = (HashMap<String, List>) request.getAttribute(att);
-			if (null != hashmap && !hashmap.isEmpty()) {
-						// 						int[] parray;
-
-						// 						parray = new int[25];
-				int pcounter = 0;
-				Iterator entries = hashmap.entrySet().iterator();
-				while (entries.hasNext()) {
-
-					Map.Entry entry = (Map.Entry) entries.next();
-					String key = (String) entry.getKey();
-					List value = (List) entry.getValue();
-					//put it in an array
-					pcounter++;
-							// 							parray[pcounter] = Integer.parseInt(value.get(2).toString());
-					position = Integer.parseInt(key);
-					pageContext.setAttribute("nodelistSize",
-					value.size());
-							//to set the user's vote
-					pageContext.setAttribute("vote",
-					value.get(15));
-		%>
-
-
-<!--  INSERT NEW NODE FORM HERE -->
-
-					<%
-				}
-					}
-					i++;
-					att = "node" + i;
-				}
-		%>
-
-		<%}%>
-
-
-
-		<!-- New Node Forn End -->
-
-
-		<div style="width: 50px; position: fixed; left: 0%; top: 0%;">
-			<p>
-				<input type="text" placeholder="type and press enter to chat"
-					id="chat">
-			</p>
-			<div id="console-container">
-				<div id="console"></div>
-			</div>
-		</div>
-		<div id="notification_board"></div>
 	</div>
-	<!-- #mainContainer end-->
-
+	<div id="notification_board"></div>
 
 	<script>
   	$(function() {
 //     	$( "#content_field" ).draggable({cancel : '.node_description, .creation_date, .project_author, .form, .comment_author, .comment_date, .comment_content'});
     	$("#node_field").draggable();
     	var content_field = $( "#content_field" ).draggable();
-    	$( "#content_field" ).resizable();
+    	var new_node_form = $( ".new_node_form" ).draggable();
     	$( ".discussion_thread" ).resizable();
-    	    	
-//    	Scaling Tool
-//     	var currentScale = 1.0;
-//     	$("#node_field").mousewheel(function(event, delta, deltaX, deltaY) {
-    	    
-    	    
-//     	    var scale = "scale:"+currentScale+deltaY/10;
-//      	    var transformOrigin = event.pageX+"px"+" "+event.pageY+"px";
-//      	    if(deltaY>0)
-//      	    {
-//      	    	$("#node_field").css({"transformOrigin":transformOrigin}).transition({scale:'+=0.05'},0,'ease');
-//      	    }
-//      	    else{
-//      	    	$("#node_field").css({"transformOrigin":transformOrigin}).transition({scale:'-=0.05'},0,'ease');
-//      	    }
-//     	    console.log(transformOrigin);
-    	    
-//     	});
 
-    	$('.node_description', content_field).mousedown(function(ev) {content_field.draggable('disable');}).mouseup(function(ev) {content_field.draggable('enable');});
     	$('.creation_date', content_field).mousedown(function(ev) {content_field.draggable('disable');}).mouseup(function(ev) {content_field.draggable('enable');});
     	$('.project_author', content_field).mousedown(function(ev) {content_field.draggable('disable');}).mouseup(function(ev) {content_field.draggable('enable');});
     	$('.form', content_field).mousedown(function(ev) {content_field.draggable('disable');}).mouseup(function(ev) {content_field.draggable('enable');});
     	$('.comment_author', content_field).mousedown(function(ev) {content_field.draggable('disable');}).mouseup(function(ev) {content_field.draggable('enable');});
     	$('.comment_date', content_field).mousedown(function(ev) {content_field.draggable('disable');}).mouseup(function(ev) {content_field.draggable('enable');});
     	$('.comment_content', content_field).mousedown(function(ev) {content_field.draggable('disable');}).mouseup(function(ev) {content_field.draggable('enable');});
+    	$('.node_content', content_field).mousedown(function(ev) {content_field.draggable('disable');}).mouseup(function(ev) {content_field.draggable('enable');});
+    	$('.new_node_content', new_node_form).mousedown(function(ev) {new_node_form.draggable('disable');}).mouseup(function(ev) {new_node_form.draggable('enable');});
+     	$('.mce-tinymce', content_field).mouseup(function(ev) {content_field.draggable('enable');});
 
   	});
   	</script>

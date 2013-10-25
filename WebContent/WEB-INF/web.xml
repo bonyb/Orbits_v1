@@ -96,6 +96,11 @@
     <servlet-class>com.user.project.DeleteProjectServlet</servlet-class>
   </servlet>
   <servlet>
+    <display-name>AddContributorsServlet</display-name>
+    <servlet-name>AddContributorsServlet</servlet-name>
+    <servlet-class>com.user.project.AddContributorsServlet</servlet-class>
+  </servlet>
+  <servlet>
     <servlet-name>cwServlet</servlet-name>
     <servlet-class>websocket.chat.ChatWebSocketServlet</servlet-class>
   </servlet>
