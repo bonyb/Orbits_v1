@@ -190,6 +190,7 @@ input#chat {
 
 
 	<div class="mainContainer">
+	
 		<div id="node_field" style="position: absolute" class="check">
 			<div id="demo">
 				<%
@@ -199,8 +200,9 @@ input#chat {
 				String conList=request.getAttribute("conList").toString();
 				int contributors = 7-Integer.parseInt(request.getAttribute("c").toString());
 				String userID = session.getAttribute("userID").toString();
-				pageContext.setAttribute("userID",userID);
-				int i = 0;
+				pageContext.setAttribute("userID",userID);%>
+				<div style="display:none" class="projectID"><%=projectId%></div>
+				<%int i = 0;
 				int position;
 
 				int x_position = 0;
@@ -273,13 +275,12 @@ input#chat {
 				if (userID.equalsIgnoreCase(value.get(6).toString())) {%>
 
 				<div class="current_user" style="display: none"><%=username%></div>
-				<div class="projectID"><%=projectId%></div>
 				<div class="w circle" id="<%=key%>" onclick="cancelEdit(<%=key%>)"
 					style="left:<%=((i * x_padding)) + x_position%>em; top:<%=(node_height * y_padding)
 										+ y_position%>em;width: <%=radius%>em;height: <%=radius%>em;  background-color: rgb(<%=parentColor.getRed()%>, <%=parentColor.getGreen()%>, <%=parentColor.getBlue()%>);">
 
 					<div class="node_map_title"><%=value.get(0)%></div>
-					<div class="notification_flag">!</div>
+					<div style="display:none ! important;" class="notification_flag">!</div>
 
 					<div class="ep"></div>
 
@@ -289,23 +290,23 @@ input#chat {
 					
 					<%radius*=15;%>
 <%-- 				<div style="position:absolute;left:100px"><%=twoDigit.format(radius)%></div> --%>
-					<div style="position:absolute;left:-2px;top:-2px"><input type="text" value="75" data-thickness=".2" data-fgColor="#AAAAAA" data-bgColor="#E1E1E1" class="vote_dial" data-readOnly="true" data-displayInput="false" data-height="<%=twoDigit.format(radius)%>" data-width="<%=twoDigit.format(radius)%>"></div>
+<%-- 					<div style="position:absolute;left:-2px;top:-2px"><input style="display:none;" type="text" value="75" data-thickness=".2" data-fgColor="#AAAAAA" data-bgColor="#E1E1E1" class="vote_dial" data-readOnly="true" data-displayInput="false" data-height="<%=twoDigit.format(radius)%>" data-width="<%=twoDigit.format(radius)%>"></div> --%>
 					
-					<a href="#" class="addnodemap_btn" id="addnodemap_<%=key%>" onclick="addNode(<%=key%>)"><img src="images/icons/addbutton-onmap-v2.png" alt="Add Node" /> </a>
+<%-- 					<a style="display:none;" href="#" class="addnodemap_btn" id="addnodemap_<%=key%>" onclick="addNode(<%=key%>)"><img src="images/icons/addbutton-onmap-v2.png" alt="Add Node" /> </a> --%>
 
 				</div>
 				<%} else {%>
 				<div class="w circle" id="<%=key%>" onclick="cancelEdit(<%=key%>)"
 					style="left:<%=((i * x_padding)) + x_position%>em; top:<%=(node_height * y_padding) + y_position%>em;width: <%=radius%>em;height: <%=radius%>em; background-color: rgb(<%=parentColor.getRed()%>, <%=parentColor.getGreen()%>, <%=parentColor.getBlue()%>);">
 					<div class="node_map_title"><%=value.get(0)%></div>
-					<div class="notification_flag">!</div>
+					<div style="display:none ! important;" class="notification_flag">!</div>
 					<div class="ep"></div>
  
 					<div class="node_color" style="display: none;">#<%=parentColor.getRed()%><%=parentColor.getGreen()%><%=parentColor.getBlue()%></div>
 
-					<div style="position:absolute;left:-2px;top:-2px"><input type="text" value="75" data-thickness=".2" data-fgColor="#AAAAAA" data-bgColor="#E1E1E1" class="vote_dial" data-readOnly="true" data-displayInput="false" data-height="<%=twoDigit.format(radius)%>" data-width="<%=twoDigit.format(radius)%>"></div>
+<%-- 					<div style="position:absolute;left:-2px;top:-2px"><input style="display:none; type="text" value="75" data-thickness=".2" data-fgColor="#AAAAAA" data-bgColor="#E1E1E1" class="vote_dial" data-readOnly="true" data-displayInput="false" data-height="<%=twoDigit.format(radius)%>" data-width="<%=twoDigit.format(radius)%>"></div> --%>
 
-					<a href="#" class="addnodemap_btn" id="addnodemap_<%=key%>"onclick="addNode(<%=key%>)"><img src="images/icons/addbutton-onmap-v2.png" alt="Add Node" /> </a>
+<%-- 					<a style="display:none;" href="#" class="addnodemap_btn" id="addnodemap_<%=key%>"onclick="addNode(<%=key%>)"><img src="images/icons/addbutton-onmap-v2.png" alt="Add Node" /> </a> --%>
 
 				</div>
 				<%}%>
@@ -400,7 +401,7 @@ input#chat {
 
 		%>
 			<!-- Old Node -->
-			<div class="node_info" id="des_<%=key%>">
+			<div class="node_info" style="display:none;" id="des_<%=key%>">
 
 				<% pageContext.setAttribute("nodeno", key);%>
 
