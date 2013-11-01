@@ -191,7 +191,7 @@ input#chat {
 
 	<div class="mainContainer">
 	
-		<div id="node_field" style="position: absolute" class="check">
+		<div id="node_field" style="position: absolute;" class="check">
 			<div id="demo">
 				<%
 				String username = session.getAttribute("username").toString();
@@ -292,7 +292,7 @@ input#chat {
 <%-- 				<div style="position:absolute;left:100px"><%=twoDigit.format(radius)%></div> --%>
 <%-- 					<div style="position:absolute;left:-2px;top:-2px"><input style="display:none;" type="text" value="75" data-thickness=".2" data-fgColor="#AAAAAA" data-bgColor="#E1E1E1" class="vote_dial" data-readOnly="true" data-displayInput="false" data-height="<%=twoDigit.format(radius)%>" data-width="<%=twoDigit.format(radius)%>"></div> --%>
 					
-<%-- 					<a style="display:none;" href="#" class="addnodemap_btn" id="addnodemap_<%=key%>" onclick="addNode(<%=key%>)"><img src="images/icons/addbutton-onmap-v2.png" alt="Add Node" /> </a> --%>
+					<a style="display:none;" href="#" class="addnodemap_btn" id="addnodemap_<%=key%>" onclick="addNode(<%=key%>)"><img src="images/icons/addbutton-onmap-v2.png" alt="Add Node" /> </a>
 
 				</div>
 				<%} else {%>
@@ -306,7 +306,7 @@ input#chat {
 
 <%-- 					<div style="position:absolute;left:-2px;top:-2px"><input style="display:none; type="text" value="75" data-thickness=".2" data-fgColor="#AAAAAA" data-bgColor="#E1E1E1" class="vote_dial" data-readOnly="true" data-displayInput="false" data-height="<%=twoDigit.format(radius)%>" data-width="<%=twoDigit.format(radius)%>"></div> --%>
 
-<%-- 					<a style="display:none;" href="#" class="addnodemap_btn" id="addnodemap_<%=key%>"onclick="addNode(<%=key%>)"><img src="images/icons/addbutton-onmap-v2.png" alt="Add Node" /> </a> --%>
+					<a style="display:none;" href="#" class="addnodemap_btn" id="addnodemap_<%=key%>"onclick="addNode(<%=key%>)"><img src="images/icons/addbutton-onmap-v2.png" alt="Add Node" /> </a>
 
 				</div>
 				<%}%>
