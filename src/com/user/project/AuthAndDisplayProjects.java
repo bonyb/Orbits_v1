@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -82,6 +83,8 @@ public class AuthAndDisplayProjects extends HttpServlet {
 
 					} else {
 						// correct authentication
+						//set the last login time
+						setLastLoginTime(personID);
 						session.setAttribute("userID", personID);
 						setAttributes(session, personID, request, response);
 					}
@@ -131,6 +134,42 @@ public class AuthAndDisplayProjects extends HttpServlet {
 		// return ((Number) result.getObject(1)).intValue();
 
 	}
+	
+	/**
+	 * Track the logged in time
+	 * 
+	 * @param username
+	 * @param password
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 */
+	void setLastLoginTime(int personID)
+	{
+		try {
+		Class.forName("com.mysql.jdbc.Driver");
+		Connection con = DriverManager
+				.getConnection("jdbc:mysql://localhost:3306/test");
+		// Connection con
+		// =DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
+		java.sql.PreparedStatement stat = con.prepareStatement("UPDATE Person SET LastLogin='" + utility.getCuttentDateTime() + "' where PersonID="+personID);
+		
+		stat.executeUpdate();
+		stat.close();
+		con.close();
+		// return ((Number) result.getObject(1)).intValue();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
 
 	/**
 	 * Set the request attribute with all his projects
@@ -169,6 +208,7 @@ public class AuthAndDisplayProjects extends HttpServlet {
 					messages.add(projectdets.getString("CreationTimeDate"));
 					messages.add(numberofContributors(projectdets
 							.getString("ProjectID")));
+					messages.add(numberofVisits(projectdets.getString("ProjectID"),userId));
 					projects.put(projectdets.getString("ProjectID"), messages);
 				}
 			}
@@ -207,6 +247,38 @@ public class AuthAndDisplayProjects extends HttpServlet {
 			ResultSet result = stat.executeQuery();
 			result.first();
 			number = Integer.parseInt(result.getString(1)) + 1;
+			con.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return number.toString();
+	}
+	
+	/**
+	 * Check the number of visits
+	 * @param projectId
+	 * @param userId
+	 * @return
+	 */
+	private String numberofVisits(String projectId,int userId) {
+		Integer number = 0;
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+			Connection con = DriverManager
+					.getConnection("jdbc:mysql://localhost:3306/test");
+			// Connection con =
+			// DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
+
+			// set user name in session
+			java.sql.PreparedStatement stat = con
+					.prepareStatement("select VisitCount from ProjectVisitHistory where ProjectID='"+ projectId + "' and PersonID="+userId);
+			ResultSet result = stat.executeQuery();
+			if(result.first()){
+			number = result.getInt(1);}
 			con.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -258,6 +330,8 @@ public class AuthAndDisplayProjects extends HttpServlet {
 					messages.add(authorRes.getString(1));
 					messages.add(numberofContributors(projectdets
 							.getString("ProjectID")));
+					//get the no of visits
+					messages.add(numberofVisits(projectdets.getString("ProjectID"),userId));
 					projects.put(projectdets.getString("ProjectID"), messages);
 
 				}

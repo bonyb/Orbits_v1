@@ -127,7 +127,7 @@ public class RegistrationServlet extends HttpServlet {
 			
 		}
 		String encryptedPassword=utility.hashPassword(password);
-		java.sql.PreparedStatement  stat1 = con.prepareStatement("INSERT into Person(Username,MyPassword,FirstName,LastName,Email,CreationDateTime) Values('"+username+"','"+encryptedPassword+"','"+firstName+"','"+lastName+"','"+email+"','"+utility.getCuttentDateTime()+"')");
+		java.sql.PreparedStatement  stat1 = con.prepareStatement("INSERT into Person(Username,MyPassword,FirstName,LastName,Email,CreationDateTime,LastLogin) Values('"+username+"','"+encryptedPassword+"','"+firstName+"','"+lastName+"','"+email+"','"+utility.getCuttentDateTime()+"','"+utility.getCuttentDateTime()+"')");
 		stat1.executeUpdate();
 		stat1.close();
 		java.sql.PreparedStatement stat3 = con.prepareStatement("select PersonID from Person where Email='"+ email + "'");

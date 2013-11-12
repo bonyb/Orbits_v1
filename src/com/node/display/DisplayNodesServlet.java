@@ -61,9 +61,10 @@ public class DisplayNodesServlet extends HttpServlet {
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 
-		String projectId= request.getParameter("projectId");
-		String selectedNodeId=request.getParameter("selectedNodeId");
-		
+		String projectId = request.getParameter("projectId");
+		String selectedNodeId = request.getParameter("selectedNodeId");
+		String log = request.getParameter("log");
+
 		HttpSession session = request.getSession(true);
 		int personID = 0;
 		if (null != session.getAttribute("userID")) {
@@ -71,15 +72,20 @@ public class DisplayNodesServlet extends HttpServlet {
 			personID = Integer.parseInt(session.getAttribute("userID")
 					.toString());
 			try {
-				HashMap<String,List<String>> nodemap=displayResults(personID,projectId);
-				if(!nodemap.isEmpty()){
-				setAttributes(personID, nodemap, request,
-						response,projectId,selectedNodeId,noofContributors(projectId),contributorsList(projectId));
-				}else{
-					// no projects 
-					RequestDispatcher dispatcher = request.getRequestDispatcher("main.jsp");
+				HashMap<String, List<String>> nodemap = displayResults(
+						personID, projectId);
+				if (!nodemap.isEmpty()) {
+					setAttributes(personID, nodemap, request, response,
+							projectId, selectedNodeId,
+							noofContributors(projectId),
+							contributorsList(projectId));
+				} else {
+					// no projects
+					RequestDispatcher dispatcher = request
+							.getRequestDispatcher("main.jsp");
 					dispatcher.forward(request, response);
 				}
+				incrementProjectVisitCount(log,personID, projectId);
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -104,8 +110,11 @@ public class DisplayNodesServlet extends HttpServlet {
 					newsession.setAttribute("userID", personID);
 					HashMap<String, List> hashMap = new HashMap<String, List>();
 					try {
-						setAttributes(personID, displayResults(personID,projectId),
-								request, response,projectId,selectedNodeId,noofContributors(projectId),contributorsList(projectId));
+						setAttributes(personID,
+								displayResults(personID, projectId), request,
+								response, projectId, selectedNodeId,
+								noofContributors(projectId),
+								contributorsList(projectId));
 
 					} catch (ClassNotFoundException e) {
 						// TODO Auto-generated catch block
@@ -126,13 +135,61 @@ public class DisplayNodesServlet extends HttpServlet {
 
 	}
 
+	/**
+	 * increment the number of time
+	 * 
+	 * @param projectId
+	 * @return
+	 */
+	private void incrementProjectVisitCount(String log,int personID,String projectID) {
+		// check if user enters project
+		if(null!=log){
+			int visitCount=0;
+		// increment the count in PersonTreeCon or Tree if author
+			// update the votes with names
+			try {
+				Class.forName("com.mysql.jdbc.Driver");
+				Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
+				// Connection con =
+				// DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"
+				// +"user=orbits&password=orbits");
+				java.sql.PreparedStatement stat = con.prepareStatement("select VisitCount from ProjectVisitHistory where ProjectID='"+ projectID + "' and PersonID="+personID);
+				ResultSet result = stat.executeQuery();
+				if(result.first()){
+					// increment in the value
+					visitCount=result.getInt(1);
+					visitCount++;
+					java.sql.PreparedStatement stat1 = con.prepareStatement("UPDATE ProjectVisitHistory SET VisitCount=" + visitCount
+							+ " Where ProjectID='" + projectID + "' and PersonID="+personID);
+					stat1.executeUpdate();
+				}else{
+					// insert the value
+					java.sql.PreparedStatement stat1 = con.prepareStatement("INSERT into ProjectVisitHistory Values("+projectID+","+personID+",1)");
+					stat1.executeUpdate();
+					
+				}
+				
+			con.close();
+			}catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+	}
+
 	int authLogin(String username, String password)
 			throws ClassNotFoundException, SQLException {
 
 		int parseInt = 0;
 		Class.forName("com.mysql.jdbc.Driver");
-		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
-//		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
+		Connection con = DriverManager
+				.getConnection("jdbc:mysql://localhost:3306/test");
+		// Connection con =
+		// DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
 		java.sql.PreparedStatement stat = con
 				.prepareStatement("select PersonID from Person where Username='"
 						+ username + "' and MyPassword='" + password + "'");
@@ -140,32 +197,36 @@ public class DisplayNodesServlet extends HttpServlet {
 		while (result.next()) {
 			parseInt = Integer.parseInt(result.getString(1));
 		}
-		
+
 		con.close();
 		return parseInt;
 		// return ((Number) result.getObject(1)).intValue();
 	}
-	
+
 	/**
 	 * check and return the max level of the tree
+	 * 
 	 * @param projectId
 	 * @return
 	 */
-	int noofContributors(String projectId){
-		int level=0;
+	int noofContributors(String projectId) {
+		int level = 0;
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
-//		Connection con =DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
-		java.sql.PreparedStatement stat = con
-				.prepareStatement("select COUNT(*) from PersonTreeCon where ProjectID='"+ projectId + "'");
-		ResultSet result = stat.executeQuery();
-		while(result.next()){
-			level=result.getInt(1);
-		}
-		stat.close();
-		con.close();
-		return level;
+			Connection con = DriverManager
+					.getConnection("jdbc:mysql://localhost:3306/test");
+			// Connection con
+			// =DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
+			java.sql.PreparedStatement stat = con
+					.prepareStatement("select COUNT(*) from PersonTreeCon where ProjectID='"
+							+ projectId + "'");
+			ResultSet result = stat.executeQuery();
+			while (result.next()) {
+				level = result.getInt(1);
+			}
+			stat.close();
+			con.close();
+			return level;
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -175,32 +236,39 @@ public class DisplayNodesServlet extends HttpServlet {
 		}
 		return level;
 	}
-	
+
 	/**
 	 * return the list of contributors
+	 * 
 	 * @param projectId
 	 * @return
 	 */
-	String contributorsList(String projectId){
-		String names="";
+	String contributorsList(String projectId) {
+		String names = "";
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
-//		Connection con =DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
-		java.sql.PreparedStatement stat = con
-				.prepareStatement("select PersonID from PersonTreeCon where ProjectID='"+ projectId + "'");
-		ResultSet result = stat.executeQuery();
-		while(result.next()){
-			String personID=result.getString(1);
-			java.sql.PreparedStatement stat1 = con.prepareStatement("select * from Person where PersonID='"+ personID + "'");
-			ResultSet personDet = stat1.executeQuery();
-			personDet.first();
-			String pname=personDet.getString("FirstName")+" "+personDet.getString("LastName")+",";
-			names=names.concat(pname);
-			stat1.close();
-		}
-		stat.close();
-		con.close();
+			Connection con = DriverManager
+					.getConnection("jdbc:mysql://localhost:3306/test");
+			// Connection con
+			// =DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
+			java.sql.PreparedStatement stat = con
+					.prepareStatement("select PersonID from PersonTreeCon where ProjectID='"
+							+ projectId + "'");
+			ResultSet result = stat.executeQuery();
+			while (result.next()) {
+				String personID = result.getString(1);
+				java.sql.PreparedStatement stat1 = con
+						.prepareStatement("select * from Person where PersonID='"
+								+ personID + "'");
+				ResultSet personDet = stat1.executeQuery();
+				personDet.first();
+				String pname = personDet.getString("FirstName") + " "
+						+ personDet.getString("LastName") + ",";
+				names = names.concat(pname);
+				stat1.close();
+			}
+			stat.close();
+			con.close();
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -211,67 +279,71 @@ public class DisplayNodesServlet extends HttpServlet {
 		return names;
 	}
 
-	HashMap<String, List<String>> displayResults(int personId,String projectId)
+	HashMap<String, List<String>> displayResults(int personId, String projectId)
 			throws ClassNotFoundException, SQLException {
 		Class.forName("com.mysql.jdbc.Driver");
-		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
-//		 Connection con =DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
+		Connection con = DriverManager
+				.getConnection("jdbc:mysql://localhost:3306/test");
+		// Connection con
+		// =DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
 		// java.sql.PreparedStatement stat=
 		// con.prepareStatement("select * from Node where AuthorId='"+personId+"' order by Parent ASC");
 		java.sql.PreparedStatement stat = con
-				.prepareStatement("select * from Node where ProjectId='"+projectId+"' order by Parent ASC");
+				.prepareStatement("select * from Node where ProjectId='"
+						+ projectId + "' order by Parent ASC");
 		ResultSet result = stat.executeQuery();
 		HashMap<String, List<String>> hashMap = new HashMap<String, List<String>>();
-		if( null != result ){
-		while (result.next()) {
-			List<String> messages = new ArrayList<String>();
-			messages.add(result.getString(2));
-			messages.add(result.getString(3));
-			messages.add(result.getString(5));
-			messages.add(result.getString(6));
-			messages.add(result.getString(7));
-			// add the author id
-			String authorId = result.getString(4);
-			java.sql.PreparedStatement authorname = con
-					.prepareStatement("select Username from Person where PersonID='"
-							+ authorId + "'");
-			ResultSet personname = authorname.executeQuery();
-			personname.first();
-			// add author name
-			String displayAuthorname = personname.getString(1);
-			StringBuilder sb = new StringBuilder(displayAuthorname);
-			sb.replace(0, 1, sb.substring(0, 1).toUpperCase());
-			messages.add(sb.toString());
-			// also add the author Id
-			messages.add(authorId);
-			// add upvote and downvote -- TODO
-			
-			messages.add(result.getString(8));
-			messages.add(result.getString(9));
-			// Arrays.asList(result.getString(2),
-			// result.getString(3),result.getString(5),result.getString(6),result.getString(7));
-			String nodeId = result.getString(1);
-			// Get and set the time
-			String dt = result.getString(10);
-			messages.add(utility.setDisplayTime(dt));
-			// Get related votes
-			retrieveVotes(nodeId,personId,messages);
-			//get the up and down votes with names
-			setUpVoteDetails(nodeId,messages);
-			setDownVoteDetails(nodeId,messages);
-			
-			// Get the related Tags
-			retrieveTags(nodeId, messages);
-			hashMap.put(nodeId, messages);
+		if (null != result) {
+			while (result.next()) {
+				List<String> messages = new ArrayList<String>();
+				messages.add(result.getString(2));
+				messages.add(result.getString(3));
+				messages.add(result.getString(5));
+				messages.add(result.getString(6));
+				messages.add(result.getString(7));
+				// add the author id
+				String authorId = result.getString(4);
+				java.sql.PreparedStatement authorname = con
+						.prepareStatement("select Username from Person where PersonID='"
+								+ authorId + "'");
+				ResultSet personname = authorname.executeQuery();
+				personname.first();
+				// add author name
+				String displayAuthorname = personname.getString(1);
+				StringBuilder sb = new StringBuilder(displayAuthorname);
+				sb.replace(0, 1, sb.substring(0, 1).toUpperCase());
+				messages.add(sb.toString());
+				// also add the author Id
+				messages.add(authorId);
+				// add upvote and downvote -- TODO
+
+				messages.add(result.getString(8));
+				messages.add(result.getString(9));
+				// Arrays.asList(result.getString(2),
+				// result.getString(3),result.getString(5),result.getString(6),result.getString(7));
+				String nodeId = result.getString(1);
+				// Get and set the time
+				String dt = result.getString(10);
+				messages.add(utility.setDisplayTime(dt));
+				// Get related votes
+				retrieveVotes(nodeId, personId, messages);
+				// get the up and down votes with names
+				setUpVoteDetails(nodeId, messages);
+				setDownVoteDetails(nodeId, messages);
+
+				// Get the related Tags
+				retrieveTags(nodeId, messages);
+				hashMap.put(nodeId, messages);
+			}
 		}
-		}
-		
+
 		con.close();
 		return hashMap;
 	}
 
 	/**
 	 * Retrieve Tags
+	 * 
 	 * @param nodeId
 	 * @param messages
 	 * @throws ClassNotFoundException
@@ -280,8 +352,10 @@ public class DisplayNodesServlet extends HttpServlet {
 	void retrieveTags(String nodeId, List<String> messages)
 			throws ClassNotFoundException, SQLException {
 		Class.forName("com.mysql.jdbc.Driver");
-		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
-//		Connection con =DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
+		Connection con = DriverManager
+				.getConnection("jdbc:mysql://localhost:3306/test");
+		// Connection con
+		// =DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
 		java.sql.PreparedStatement stat = con
 				.prepareStatement("select TagID from NodeTagsCon where NodeID='"
 						+ nodeId + "'");
@@ -299,12 +373,13 @@ public class DisplayNodesServlet extends HttpServlet {
 				messages.add(tagnameMsg);
 			}
 		}
-		
+
 		con.close();
 	}
-	
+
 	/**
-	 *Set up vote details
+	 * Set up vote details
+	 * 
 	 * @param nodeId
 	 * @param messages
 	 * @throws ClassNotFoundException
@@ -313,14 +388,16 @@ public class DisplayNodesServlet extends HttpServlet {
 	void setUpVoteDetails(String nodeId, List<String> messages)
 			throws ClassNotFoundException, SQLException {
 		Class.forName("com.mysql.jdbc.Driver");
-		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
-//		Connection con =DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
+		Connection con = DriverManager
+				.getConnection("jdbc:mysql://localhost:3306/test");
+		// Connection con
+		// =DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
 		java.sql.PreparedStatement stat = con
 				.prepareStatement("select PersonID,UpVote from UpDownVote where NodeID='"
 						+ nodeId + "' and UpVote > 0");
 		ResultSet upvoteDetails = stat.executeQuery();
 		if (!upvoteDetails.wasNull()) {
-			String nameList="Guest.1";
+			String nameList = "Guest.1";
 			while (upvoteDetails.next()) {
 				// get user name
 				int personID = upvoteDetails.getInt(1);
@@ -329,21 +406,22 @@ public class DisplayNodesServlet extends HttpServlet {
 								+ personID + "'");
 				ResultSet name = stat1.executeQuery();
 				name.first();
-				String username=name.getString(1);
+				String username = name.getString(1);
 				stat1.close();
-				
+
 				// get up vote count
-				String upVote=upvoteDetails.getString(2);
-				nameList=nameList.concat(username+"."+upVote+"#");
+				String upVote = upvoteDetails.getString(2);
+				nameList = nameList.concat(username + "." + upVote + "#");
 			}
 			messages.add(nameList);
 		}
-		
+
 		con.close();
 	}
-	
+
 	/**
-	 *Set down vote details
+	 * Set down vote details
+	 * 
 	 * @param nodeId
 	 * @param messages
 	 * @throws ClassNotFoundException
@@ -352,14 +430,16 @@ public class DisplayNodesServlet extends HttpServlet {
 	void setDownVoteDetails(String nodeId, List<String> messages)
 			throws ClassNotFoundException, SQLException {
 		Class.forName("com.mysql.jdbc.Driver");
-		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
-//		Connection con =DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
+		Connection con = DriverManager
+				.getConnection("jdbc:mysql://localhost:3306/test");
+		// Connection con
+		// =DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
 		java.sql.PreparedStatement stat = con
 				.prepareStatement("select PersonID,DownVote from UpDownVote where NodeID='"
 						+ nodeId + "' and DownVote > 0");
 		ResultSet upvoteDetails = stat.executeQuery();
 		if (!upvoteDetails.wasNull()) {
-			String nameList="Guest.1";
+			String nameList = "Guest.1";
 			while (upvoteDetails.next()) {
 				// get user name
 				int personID = upvoteDetails.getInt(1);
@@ -368,97 +448,101 @@ public class DisplayNodesServlet extends HttpServlet {
 								+ personID + "'");
 				ResultSet name = stat1.executeQuery();
 				name.first();
-				String username=name.getString(1);
+				String username = name.getString(1);
 				stat1.close();
-				
+
 				// get up vote count
-				String downVote=upvoteDetails.getString(2);
-				nameList=nameList.concat(username+"."+downVote+"#");
+				String downVote = upvoteDetails.getString(2);
+				nameList = nameList.concat(username + "." + downVote + "#");
 			}
 			messages.add(nameList);
 		}
-		
+
 		con.close();
 	}
-	
+
 	/**
 	 * retrieve Votes
+	 * 
 	 * @param nodeId
 	 * @param messages
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
 	 */
-	void retrieveVotes(String nodeId, int authorId,List<String> messages)
-	throws ClassNotFoundException, SQLException {
+	void retrieveVotes(String nodeId, int authorId, List<String> messages)
+			throws ClassNotFoundException, SQLException {
 		Class.forName("com.mysql.jdbc.Driver");
-		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
-//		Connection con =DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
-		//get -1 votes
+		Connection con = DriverManager
+				.getConnection("jdbc:mysql://localhost:3306/test");
+		// Connection con
+		// =DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
+		// get -1 votes
 		java.sql.PreparedStatement stat = con
-		.prepareStatement("select count(*) from VoteNodeCon where NodeID='"
-				+ nodeId + "' and VoteId=-1");
-		ResultSet lowest = stat.executeQuery();	
+				.prepareStatement("select count(*) from VoteNodeCon where NodeID='"
+						+ nodeId + "' and VoteId=-1");
+		ResultSet lowest = stat.executeQuery();
 		lowest.first();
-		Integer low=lowest.getInt(1);
+		Integer low = lowest.getInt(1);
 		messages.add(low.toString());
 		stat.close();
-		
+
 		java.sql.PreparedStatement stat1 = con
-		.prepareStatement("select count(*) from VoteNodeCon where NodeID='"
-				+ nodeId + "' and VoteId=1");
-		lowest = stat1.executeQuery();	
+				.prepareStatement("select count(*) from VoteNodeCon where NodeID='"
+						+ nodeId + "' and VoteId=1");
+		lowest = stat1.executeQuery();
 		lowest.first();
-		low=lowest.getInt(1);
+		low = lowest.getInt(1);
 		messages.add(low.toString());
 		stat1.close();
-		
+
 		java.sql.PreparedStatement stat2 = con
-		.prepareStatement("select count(*) from VoteNodeCon where NodeID='"
-				+ nodeId + "' and VoteId=2");
-		lowest = stat2.executeQuery();	
+				.prepareStatement("select count(*) from VoteNodeCon where NodeID='"
+						+ nodeId + "' and VoteId=2");
+		lowest = stat2.executeQuery();
 		lowest.first();
-		low=lowest.getInt(1);
+		low = lowest.getInt(1);
 		messages.add(low.toString());
 		stat2.close();
-		
+
 		java.sql.PreparedStatement stat3 = con
-		.prepareStatement("select count(*) from VoteNodeCon where NodeID='"
-				+ nodeId + "' and VoteId=3");
-		lowest = stat3.executeQuery();	
+				.prepareStatement("select count(*) from VoteNodeCon where NodeID='"
+						+ nodeId + "' and VoteId=3");
+		lowest = stat3.executeQuery();
 		lowest.first();
-		low=lowest.getInt(1);
+		low = lowest.getInt(1);
 		messages.add(low.toString());
 		stat3.close();
-		
+
 		java.sql.PreparedStatement stat4 = con
-		.prepareStatement("select count(*) from VoteNodeCon where NodeID='"
-				+ nodeId + "' and VoteId=4");
-		lowest = stat4.executeQuery();	
+				.prepareStatement("select count(*) from VoteNodeCon where NodeID='"
+						+ nodeId + "' and VoteId=4");
+		lowest = stat4.executeQuery();
 		lowest.first();
-		low=lowest.getInt(1);
+		low = lowest.getInt(1);
 		messages.add(low.toString());
 		stat4.close();
-		
+
 		// store the user's vote
 		java.sql.PreparedStatement stat5 = con
-		.prepareStatement("select VoteId from VoteNodeCon where NodeID='"
-				+ nodeId + "' and AuthorID="+authorId);
-		lowest = stat5.executeQuery();	
-		Integer myVote=0;
-		if(lowest.first()){
-		myVote=lowest.getInt(1);
+				.prepareStatement("select VoteId from VoteNodeCon where NodeID='"
+						+ nodeId + "' and AuthorID=" + authorId);
+		lowest = stat5.executeQuery();
+		Integer myVote = 0;
+		if (lowest.first()) {
+			myVote = lowest.getInt(1);
 		}
 		messages.add(myVote.toString());
 		stat5.close();
 		con.close();
-		}
+	}
 
 	void setAttributes(int personID, HashMap<String, List<String>> result,
-			HttpServletRequest request, HttpServletResponse response,String projectId,String selectedNodeId, int noofContributors,String contributorsList)
-			throws ServletException, IOException, ClassNotFoundException,
-			SQLException {
+			HttpServletRequest request, HttpServletResponse response,
+			String projectId, String selectedNodeId, int noofContributors,
+			String contributorsList) throws ServletException, IOException,
+			ClassNotFoundException, SQLException {
 		// find number of parents
-		
+
 		// create new set of hashmaps for nodes based on no of parents
 
 		HashMap<String, List> hashMap0 = new HashMap<String, List>();
@@ -613,24 +697,29 @@ public class DisplayNodesServlet extends HttpServlet {
 
 		// setting the comments
 		request.setAttribute("comments", retrieveComments());
-		
-		//means the node is selected from the projects page
-		if(null==selectedNodeId || selectedNodeId.isEmpty() || selectedNodeId.length() ==0){
+
+		// means the node is selected from the projects page
+		if (null == selectedNodeId || selectedNodeId.isEmpty()
+				|| selectedNodeId.length() == 0) {
 			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
-//			 Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
+			Connection con = DriverManager
+					.getConnection("jdbc:mysql://localhost:3306/test");
+			// Connection con =
+			// DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
 			java.sql.PreparedStatement stat = con
 					.prepareStatement("select NodeID from Node where ProjectId='"
 							+ projectId + "' and Parent=0");
 			ResultSet firstNode = stat.executeQuery();
-			while(firstNode.next()){
-			selectedNodeId=firstNode.getString(1);
-		}
+			while (firstNode.next()) {
+				selectedNodeId = firstNode.getString(1);
+			}
 			con.close();
 		}
 		request.setAttribute("c", noofContributors);
 		request.setAttribute("conList", contributorsList);
-		RequestDispatcher dispatcher = request.getRequestDispatcher("main.jsp?projectId="+projectId+"&selectedNodeId="+selectedNodeId);
+		RequestDispatcher dispatcher = request
+				.getRequestDispatcher("main.jsp?projectId=" + projectId
+						+ "&selectedNodeId=" + selectedNodeId);
 		dispatcher.forward(request, response);
 	}
 
@@ -638,12 +727,14 @@ public class DisplayNodesServlet extends HttpServlet {
 			throws ClassNotFoundException, SQLException {
 		MultivaluedMap<String, List<String>> commentMap = new MetadataMap<String, List<String>>();
 		Class.forName("com.mysql.jdbc.Driver");
-		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
-//		 Connection con =DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
+		Connection con = DriverManager
+				.getConnection("jdbc:mysql://localhost:3306/test");
+		// Connection con
+		// =DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
 		PreparedStatement stat = con
 				.prepareStatement("select NodeID,CommentText,CreationTimeDate,AuthorID from NodeConvo");
 		ResultSet commentsRes = stat.executeQuery();
-		
+
 		if (null != commentsRes) {
 			while (commentsRes.next()) {
 				List<String> commentDet = new ArrayList<String>();
@@ -654,9 +745,11 @@ public class DisplayNodesServlet extends HttpServlet {
 				commentDet
 						.add(utility.setDisplayTime(commentsRes.getString(3)));
 				// add author name
-				Connection con1 = DriverManager.getConnection("jdbc:mysql://localhost:3306/test");
-//				Connection con1 =DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
-				
+				Connection con1 = DriverManager
+						.getConnection("jdbc:mysql://localhost:3306/test");
+				// Connection con1
+				// =DriverManager.getConnection("jdbc:mysql://localhost:3306/orbits?"+"user=orbits&password=orbits");
+
 				PreparedStatement stat1 = con1
 						.prepareStatement("select Username from Person where PersonID='"
 								+ commentsRes.getString(4) + "'");

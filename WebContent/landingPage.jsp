@@ -51,14 +51,13 @@ if(null!=request.getAttribute("nonExistantPerson")){%>
 			<div class="add_users_form">				
 				<div class="add_members" style="white-space: nowrap;">Add Team Members</div>
 					<div class="new_project_users">
-					<input type="text" name="person1" class="new_user_input" placeholder="Username"/>
-					<input type="text" name="person2" class="new_user_input" placeholder="Username"/>
-					<input type="text" name="person3" class="new_user_input" placeholder="Username"/>
-					<input type="text" name="person4" class="new_user_input" placeholder="Username"/>
-					<input type="text" name="person5" class="new_user_input" placeholder="Username"/>
-					<input type="text" name="person6" class="new_user_input" placeholder="Username"/>
-					<input type="text" name="person7" class="new_user_input" placeholder="Username"/>
-					<input type="text" name="person8" class="new_user_input" placeholder="Username"/>
+					<input type="text" name="person1" class="new_user_input" placeholder="Username or Email"/>
+					<input type="text" name="person2" class="new_user_input" placeholder="Username or Email"/>
+					<input type="text" name="person3" class="new_user_input" placeholder="Username or Email"/>
+					<input type="text" name="person4" class="new_user_input" placeholder="Username or Email"/>
+					<input type="text" name="person5" class="new_user_input" placeholder="Username or Email"/>
+					<input type="text" name="person6" class="new_user_input" placeholder="Username or Email"/>
+					<input type="text" name="person7" class="new_user_input" placeholder="Username or Email"/>
 				</div>
 				<input type="submit" alt="Submit" class="newProjectSubmit" value="Submit">
 				
@@ -110,10 +109,11 @@ if (null != hashmap && !hashmap.isEmpty()) {
 								id="delete_<%=key%>" align="right" width="48" height="20" style="margin-left:-20px">
 							</form>
 					</div>
-			<a class="project_link octagonBlack" href="DisplayNodesServlet?projectId=<%=key%>">
+			<a class="project_link octagonBlack" href="DisplayNodesServlet?projectId=<%=key%>&log=t">
 				<img src="images/shadow-node.png" style="width:100%;height:243%;position:absolute;top:-71%;left:0%;"/>
 				<div class="contributors_num"><%=value.get(2)%></div>
 			</a>
+			<div style="margin-left:-32px;font-wight:400pt;" class="visit"><%=value.get(3)%></div>
 			</div>
 			
 		<%}else{
@@ -128,10 +128,11 @@ if (null != hashmap && !hashmap.isEmpty()) {
 					<div class="project_author"><%=username%></div>
 				</div>
 			</div>
-			<a class="project_link octagonBlack" href="DisplayNodesServlet?projectId=<%=key%>">
+			<a class="project_link octagonBlack" href="DisplayNodesServlet?projectId=<%=key%>&log=t">
 				<img src="images/shadow-node.png" style="width:100%;height:243%;position:absolute;top:-71%;left:0%;"/>
 				<div class="contributors_num"><%=value.get(2)%></div>
 			</a>
+			<div style="margin-left:-12px;font-wight:400pt;" class="visit"><%=value.get(3)%></div>
 			</div>
 			<%}
 		i++;
@@ -172,10 +173,10 @@ if (null != hashmapContri && !hashmapContri.isEmpty()) {
 				</div>
 			</div>
 			
-			<a class="project_link square" href="DisplayNodesServlet?projectId=<%=key%>">
+			<a class="project_link square" href="DisplayNodesServlet?projectId=<%=key%>&log=t">
 				<div class="contributors_num" style="top:30%"><%=value.get(3)%></div>
 			</a>
-				
+			<div style="margin-left:-12px;font-wight:400pt;" class="visit"><%=value.get(4)%></div>	
 		</div>
 	<%
 		i++;

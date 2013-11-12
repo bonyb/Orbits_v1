@@ -95,6 +95,10 @@ public class CreateNewTree extends HttpServlet {
 			ResultSet resultNode= stat4.executeQuery();
 			resultNode.first();
 			String nodeId=resultNode.getString(1);
+			
+			// insert the Visit =1 for the project
+			java.sql.PreparedStatement stat5 = con.prepareStatement("INSERT into ProjectVisitHistory Values("+projectID+","+userId+",1)");
+			stat5.executeUpdate();
 			con.close();
 			String aDestinationPage="DisplayNodesServlet?projectId="+projectID+"&selectedNodeId="+nodeId;
 			String urlWithSessionID = response.encodeRedirectURL(aDestinationPage.toString());
